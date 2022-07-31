@@ -11,6 +11,7 @@
       class="loginForm"
     >
       <el-form-item label="帳號" prop="userName">
+        <span>{{loginForm.userName}}</span>
         <el-input
           v-model="loginForm.userName"
           autocomplete="off"
@@ -53,17 +54,18 @@ export default defineComponent({
 
     const rules = {
       userName: [
-        { required: true, message: "輸入你的用戶名", trigger: "blur" },
+        { required: true, message: "用戶名不能為空", trigger: "blur" },
         { min: 3, message: "長度不能少於3", trigger: "blur" },
       ],
       password: [
-        { required: true, message: "輸入你的密碼", trigger: "blur" },
+        { required: true, message: "密碼不能為空", trigger: "blur" },
         { min: 3, message: "長度不能少於3", trigger: "blur" },
       ],
     };
 
     const submitForm = (loginFormRef: FormInstance | undefined) => {
       if (!loginFormRef) return;
+      console.log(loginFormRef)
       loginFormRef.validate((valid) => {
         if (valid) {
           console.log("submit!");
