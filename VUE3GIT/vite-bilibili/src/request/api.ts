@@ -1,6 +1,6 @@
 import request from './request'
 
-interface codeLoginRes {
+interface codeLoginUrl {
     code: number;
     status: boolean;
     ts: number;
@@ -10,8 +10,23 @@ interface codeLoginRes {
     }
 }
 
-//登錄api
-export const codeLoginApi = (): Promise<codeLoginRes> => {
+//獲取2維碼登錄api
+export const getCodeLoginUrl = (): Promise<codeLoginUrl> => {
     return request.get('/qrcode/getLoginUrl');
 }
 
+interface codeLoginInfo {
+    code?: number;
+    status: boolean;
+    message?:string;
+    ts?: number;
+    data: number|{
+        url: string;
+        oauthKey: string;
+    }
+}
+
+//2維碼登錄api
+export const getCodeLoginInfo=(oauthKey:string):Promise<codeLoginInfo>=>{
+    return request.post('/qrcode/getLoginInfo?oauthKey='+oauthKey)
+}
