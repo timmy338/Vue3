@@ -1,19 +1,14 @@
 <template>
   <div id="loginView">
+    <div id="code"><canvas id="canvas"></canvas></div>
     <div class="title">
       <text>哔哩哔哩登录</text>
     </div>
-    <el-form
-      ref="loginFormRef"
-      :model="loginForm"
-      status-icon
-      :rules="rules"
-      class="loginForm"
-    >
+    <el-form ref="loginFormRef" :model="loginForm" :rules="rules" class="loginForm">
       <el-form-item label="帳號" prop="userName">
-        <span>{{ loginForm.userName }}</span>
         <el-input
           v-model="loginForm.userName"
+          type="text"
           autocomplete="off"
           placeholder="Please input username"
         />
@@ -27,8 +22,8 @@
         />
       </el-form-item>
       <el-form-item class="btnDiv">
-        <el-button class="registerBtn">注冊</el-button>
-        <el-button class="loginBtn" color="#00A1D6" @click="submitForm(loginFormRef)">
+        <el-button class="registerBtn" @click="getCode()">注冊</el-button>
+        <el-button class="loginBtn" color="#00A1D6" @click="submitForm()">
           登錄
         </el-button>
       </el-form-item>
@@ -36,52 +31,67 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, reactive, toRefs, ref } from "vue";
+<script lang="ts" setup>
+import { reactive, toRefs, ref, onMounted } from "vue";
+import { codeLoginApi } from "../request/api";
+import QRCode from "qrcode";
+import axios from "axios";
 //獲取element-type
 import type { FormInstance } from "element-plus";
-const loginFormRef = ref<FormInstance>();
 
-export default defineComponent({
-  name: "login",
-  setup() {
-    const data = reactive({
-      loginForm: {
-        userName: "",
-        password: "",
-      },
-    });
-
-    const rules = {
-      userName: [
-        { required: true, message: "用戶名不能為空", trigger: "blur" },
-        { min: 3, message: "長度不能少於3", trigger: "blur" },
-      ],
-      password: [
-        { required: true, message: "密碼不能為空", trigger: "blur" },
-        { min: 3, message: "長度不能少於3", trigger: "blur" },
-      ],
-    };
-
-    const submitForm = (loginFormRef: FormInstance | undefined) => {
-      if (!loginFormRef) return;
-      console.log(loginFormRef);
-      loginFormRef.validate((valid) => {
-        if (valid) {
-          console.log("submit!");
-        } else {
-          console.log("error submit!");
-          return false;
-        }
-      });
-    };
-    return {
-      ...toRefs(data),
-      rules,
-      submitForm,
-      loginFormRef,
-    };
+const data = reactive({
+  loginForm: {
+    userName: "",
+    password: "",
   },
+});
+
+let { loginForm } = toRefs(data);
+
+//獲取Form的dom對象
+const loginFormRef = ref();
+
+//校驗規則
+const rules = {
+  userName: [
+    { required: true, message: "用戶名不能為空", trigger: "blur" },
+    { min: 3, message: "長度不能少於3", trigger: "blur" },
+  ],
+  password: [
+    { required: true, message: "密碼不能為空", trigger: "blur" },
+    { min: 3, message: "長度不能少於3", trigger: "blur" },
+  ],
+};
+
+const getCode = () => {
+  codeLoginApi().then((res) => {
+    console.log(res);
+  });
+};
+
+const submitForm = () => {
+  loginFormRef.value
+    .validate()
+    .then(() => {
+      console.log("successful");
+    })
+    .catch(() => {
+      console.log("error");
+    });
+};
+
+const useqrcode = () => {
+  let canvas = document.getElementById("canvas");
+  let text = "string";
+  QRCode.toCanvas(canvas, text, function (error) {
+    if (error) console.error(error);
+    console.log("QRcode success");
+  });
+};
+
+onMounted(() => {
+  getCode();
+  /* useqrcode(); */
 });
 </script>
 

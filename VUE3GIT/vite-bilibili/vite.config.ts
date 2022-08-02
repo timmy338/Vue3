@@ -16,5 +16,15 @@ export default defineConfig({
     }),
     Components({
       resolvers: [ElementPlusResolver()],
-    }),]
+    }),],
+  // 跨域
+  server: {
+    proxy: {
+      "/api": {
+        target: "http://passport.bilibili.com",
+        changeOrigin: true,
+        rewrite: (path) => path.replace("/api", ""),
+      }
+    }
+  }
 })

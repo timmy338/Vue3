@@ -7,6 +7,5 @@
 import { reactive, toRefs, ref } from "vue";
 </script>
 <style lang="less" scoped>
-.a {
-}
+
 </style>
