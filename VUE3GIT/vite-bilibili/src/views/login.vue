@@ -13,7 +13,7 @@
       </div>
       <div class="line"></div>
       <el-form ref="loginFormRef" :model="loginForm" :rules="rules" id="loginForm">
-        <div style="text-align: center;margin-bottom:20px">
+        <div style="text-align: center; margin-bottom: 20px">
           <text style="font-size: 20px">密碼登录</text>
         </div>
         <el-form-item label="帳號" prop="userName">
@@ -47,6 +47,7 @@
 import { reactive, toRefs, ref, onMounted } from "vue";
 import { getCodeLoginUrl, getCodeLoginInfo } from "../request/api";
 import QRCode from "qrcode";
+import { getCookie } from "../ts/getCookieInUrl";
 
 const data = reactive({
   loginForm: {
@@ -91,6 +92,9 @@ const submitCode = () => {
   getCodeLoginInfo(data.codeLoginInfo.oauthKey).then((res) => {
     console.log(res);
     if (res.status) {
+      if (typeof res.data === "object") {
+        getCookie(res.data.url);
+      }
       console.log("登錄成功");
     } else {
       alert("請先掃瞄2維碼");

@@ -22,7 +22,8 @@ interface codeLoginInfo {
     ts?: number;
     data: number|{
         url: string;
-        oauthKey: string;
+        refresh_token: string;
+        timestamp:number;
     }
 }
 
