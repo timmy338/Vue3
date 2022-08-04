@@ -45,9 +45,9 @@
 
 <script lang="ts" setup>
 import { reactive, toRefs, ref, onMounted } from "vue";
-import { getCodeLoginUrl, getCodeLoginInfo } from "../request/api";
+import { getCodeLoginUrl, getCodeLoginInfo, getUserInfo } from "../request/api";
 import QRCode from "qrcode";
-import { getCookie } from "../ts/getCookieInUrl";
+import { setCookie } from "../ts/getCookieInUrl";
 
 const data = reactive({
   loginForm: {
@@ -93,7 +93,10 @@ const submitCode = () => {
     console.log(res);
     if (res.status) {
       if (typeof res.data === "object") {
-        getCookie(res.data.url);
+        setCookie(res.data.url);
+        getUserInfo().then((res) => {
+          console.log(res);
+        });
       }
       console.log("登錄成功");
     } else {
@@ -122,6 +125,9 @@ const useqrcode = () => {
 };
 
 onMounted(() => {
+  getUserInfo().then(res => {
+    console.log(res);
+  });
   useqrcode();
 });
 </script>

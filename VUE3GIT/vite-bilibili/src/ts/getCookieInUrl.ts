@@ -1,6 +1,6 @@
 import Cookie from "js-cookie"
 
-export function getCookie(url: string) {
+export function setCookie(url: string) {
 
     let DedeUserID: RegExpMatchArray|string | null = url.match("DedeUserID=\\w+");
     let DedeUserID__ckMd5: RegExpMatchArray | null = url.match("DedeUserID__ckMd5=\\w+");
