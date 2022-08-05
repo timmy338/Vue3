@@ -47,7 +47,9 @@
 import { reactive, toRefs, ref, onMounted } from "vue";
 import { getCodeLoginUrl, getCodeLoginInfo, getUserInfo } from "../request/api";
 import QRCode from "qrcode";
+import { useRouter } from "vue-router";
 import { setCookie } from "../ts/getCookieInUrl";
+import Cookies from "js-cookie";
 
 const data = reactive({
   loginForm: {
@@ -63,7 +65,9 @@ const data = reactive({
 let { loginForm } = toRefs(data);
 
 //獲取Form的dom對象
-const loginFormRef = ref();
+let loginFormRef = ref();
+//獲取當前頁面的對象
+let router = useRouter();
 
 //校驗規則
 const rules = {
@@ -125,9 +129,12 @@ const useqrcode = () => {
 };
 
 onMounted(() => {
-  getUserInfo().then(res => {
+  if (Cookies.get("SESSDATA")) {
+    router.push("/home");
+  }
+/*   getUserInfo().then((res) => {
     console.log(res);
-  });
+  }); */
   useqrcode();
 });
 </script>
