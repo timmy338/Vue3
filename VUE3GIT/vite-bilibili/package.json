@@ -9,8 +9,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.1.2",
+    "@fortawesome/free-solid-svg-icons": "^6.1.2",
+    "@fortawesome/vue-fontawesome": "^3.0.1",
     "@types/qrcode": "^1.4.2",
     "axios": "^0.27.2",
+    "csshake": "^1.7.0",
     "element-plus": "^2.2.11",
     "js-cookie": "^3.0.1",
     "jsencrypt": "^3.2.1",
