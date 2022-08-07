@@ -36,7 +36,9 @@ interface userInfo {
     code: number;
     message: string;
     ttl:number;
-    data: object;
+    data: {
+        face:string;
+    };
 }
 //用戶信息api
 export const getUserInfo=():Promise<userInfo>=>{

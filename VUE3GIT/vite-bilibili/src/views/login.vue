@@ -45,7 +45,7 @@
 
 <script lang="ts" setup>
 import { reactive, toRefs, ref, onMounted } from "vue";
-import { getCodeLoginUrl, getCodeLoginInfo, getUserInfo } from "../request/api";
+import { getCodeLoginUrl, getCodeLoginInfo } from "../request/api";
 import QRCode from "qrcode";
 import { useRouter } from "vue-router";
 import { setCookie } from "../ts/getCookieInUrl";
@@ -98,9 +98,6 @@ const submitCode = () => {
     if (res.status) {
       if (typeof res.data === "object") {
         setCookie(res.data.url);
-        getUserInfo().then((res) => {
-          console.log(res);
-        });
       }
       console.log("登錄成功");
     } else {
@@ -132,9 +129,7 @@ onMounted(() => {
   if (Cookies.get("SESSDATA")) {
     router.push("/home");
   }
-/*   getUserInfo().then((res) => {
-    console.log(res);
-  }); */
+
   useqrcode();
 });
 </script>
