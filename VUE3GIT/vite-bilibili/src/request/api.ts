@@ -1,9 +1,12 @@
 import request from './request'
 
-interface codeLoginUrl {
+interface apiBasic{
     code: number;
     status: boolean;
     ts: number;
+}
+
+interface codeLoginUrl  extends apiBasic{
     data: {
         url: string;
         oauthKey: string;
@@ -32,10 +35,7 @@ export const getCodeLoginInfo=(oauthKey:string):Promise<codeLoginInfo>=>{
     return request.post('/passport/qrcode/getLoginInfo?oauthKey='+oauthKey)
 }
 
-interface userInfo {
-    code: number;
-    message: string;
-    ttl:number;
+interface userInfo extends apiBasic{
     data: {
         face:string;
     };
@@ -43,4 +43,27 @@ interface userInfo {
 //用戶信息api
 export const getUserInfo=():Promise<userInfo>=>{
     return request.get('/api/nav');
+}
+
+export type rcmdVideo={
+    pic:string,
+    duration:number,
+    owner:{
+        name:string,
+        face:string
+    }
+    stat:{
+        view:number,
+        like:number
+    }
+}
+
+interface recommendVideo extends apiBasic{
+    data: {
+        item:rcmdVideo[];
+    };
+}
+//首頁輪播圖
+export const getHomePageCarousel=():Promise<recommendVideo>=>{
+    return request.get('/api/x/web-interface/index/top/rcmd?version=1&ps=3');
 }
