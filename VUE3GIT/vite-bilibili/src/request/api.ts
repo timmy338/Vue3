@@ -48,6 +48,8 @@ export const getUserInfo=():Promise<userInfo>=>{
 export type rcmdVideo={
     pic:string,
     duration:number,
+    title:string,
+    pubdate:number|string,
     owner:{
         name:string,
         face:string
@@ -63,7 +65,11 @@ interface recommendVideo extends apiBasic{
         item:rcmdVideo[];
     };
 }
-//首頁輪播圖
-export const getHomePageCarousel=():Promise<recommendVideo>=>{
+//首頁推薦視頻
+export const getHomePageRcmdVideo=():Promise<recommendVideo>=>{
+    return request.get('/api/x/web-interface/index/top/rcmd?version=1&ps=3');
+}
+
+export const getHomeCarousel=():Promise<unknown>=>{
     return request.get('/api/x/web-interface/index/top/rcmd?version=1&ps=3');
 }

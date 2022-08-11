@@ -20,7 +20,7 @@
         <a>首页</a>
       </li>
       <li v-for="tab in leftTabs">
-        <a class="shake-slow">{{ tab }}</a>
+        <a class="shake shake-slow">{{ tab }}</a>
       </li>
       <li>
         <font-awesome-icon class="icons" icon="fa-download" />
@@ -86,19 +86,40 @@
 
   <div class="thirdDiv">
     <div class="thirdLeft">
-      <div class="block text-center" m="t-4">
+      <div class="block text-center" m="t-4" style="position: relative">
         <!-- <span class="demonstration">Switch when indicator is clicked</span> -->
-        <el-carousel trigger="click" height="400px">
-          <el-carousel-item v-for="item in 4" :key="item">
-            <h3 class="small justify-center" text="2xl">{{ item }}</h3>
+        <el-carousel trigger="click" height="470px">
+          <el-carousel-item v-for="item in thirdCarouselInfo" :key="item">
+            <img :src="item.url" style="width: 100%" />
+            <h3
+              text="2xl"
+              style="
+                position: absolute;
+                color: white;
+                bottom: -30px;
+                left: 20px;
+                font-size: 20px;
+                font-weight: bold;
+              "
+            >
+              {{ item.alt }}
+            </h3>
           </el-carousel-item>
         </el-carousel>
       </div>
     </div>
     <div class="thirdRight">
-      <div v-for="tab in thirdVideo">
-        {{ tab.owner.name }}
-        <img :src="tab.pic" />
+      <div v-for="tab in thirdVideo" class="rcmdVideo">
+        <img :src="tab.pic" class="rcmdVideoImg" />
+        <div class="rcmdVideoTitle">
+          {{ tab.title }}
+        </div>
+        <div class="ownInfo">
+          <font-awesome-icon icon="fa-solid fa-id-badge" />
+
+          <span style="margin: 0 5px">{{ tab.owner.name }}</span
+          >{{ tab.pubdate }}
+        </div>
       </div>
     </div>
   </div>
@@ -106,7 +127,7 @@
 
 <script lang="ts" setup>
 import { reactive, toRefs, ref, onMounted } from "vue";
-import { getUserInfo, getHomePageCarousel, rcmdVideo } from "../request/api";
+import { getUserInfo, getHomePageRcmdVideo, rcmdVideo } from "../request/api";
 //搜索條
 import { Search } from "@element-plus/icons-vue";
 const input1 = ref("");
@@ -155,20 +176,49 @@ const data = reactive({
     { name: "课堂", icon: "fa-solid fa-school" },
     { name: "新歌热榜", icon: "fa-solid fa-compact-disc" },
   ],
-  thirdVideo:[] as rcmdVideo[]
+  thirdCarouselInfo: [
+    {
+      url:
+        "https://i0.hdslb.com/bfs/banner/dc8e3b12a4989ccd326afcfe6a1d0a04aa051f87.png@976w_550h_1c.webp",
+      alt: "只要有我在，休要伤害邪龙大人！",
+    },
+    {
+      url:
+        "https://i0.hdslb.com/bfs/banner/928d1b08bd755e98b68565f0f6a6398f3e218f27.png@976w_550h_1c.webp",
+      alt: "曲云突然有了一个妙计",
+    },
+    {
+      url:
+        "https://i0.hdslb.com/bfs/banner/5f78b6ea17111d623fb644458374240aa670520d.png@976w_550h_1c.webp",
+      alt: "做胆小鬼没什么不好意思的",
+    },
+  ],
+  thirdVideo: [] as rcmdVideo[],
 });
 
 //推薦視頻
 
-let { leftTabs, rightTabs, secondTabsMiddle, secondTabsRight,thirdVideo } = toRefs(data);
+let {
+  leftTabs,
+  rightTabs,
+  secondTabsMiddle,
+  secondTabsRight,
+  thirdVideo,
+  thirdCarouselInfo,
+} = toRefs(data);
 
 onMounted(() => {
   getUserInfo().then((res) => {
     data.avatar = res.data.face;
   });
-  getHomePageCarousel().then((res) => {
-    data.thirdVideo = res.data.item;
-    console.log(res);
+  getHomePageRcmdVideo().then((res) => {
+    data.thirdVideo = res.data.item.slice(0, 6);
+    for (let i = 0; i < data.thirdVideo.length; i++) {
+      let myDate = new Date(Number(data.thirdVideo[i].pubdate) * 1000);
+      data.thirdVideo[i].pubdate =
+        "· " + Number(myDate.getMonth() + 1) + "-" + myDate.getDate();
+    }
+    console.log(res.data.item[0]);
   });
 });
 </script>
@@ -179,12 +229,12 @@ onMounted(() => {
     position: absolute;
     z-index: -1;
     width: 100vw;
-    height: 155px;
+    height: 230px;
   }
   .logo-img {
     position: absolute;
-    left: 75px;
-    top: 60px;
+    left: 125px;
+    top: 120px;
   }
 }
 
@@ -221,13 +271,14 @@ onMounted(() => {
     margin-top: 10px;
     width: 25%;
     height: 40px;
+    .el-input__wrapper,
+    .el-input,
+    .el-input__inner,
+    #el-id-8546-0 {
+      opacity: 0.8;
+    }
   }
-  .el-input__wrapper,
-  .el-input,
-  .el-input__inner,
-  #el-id-8546-0 {
-    opacity: 0.8;
-  }
+
   .headRight {
     padding-top: 10px;
     width: 24%;
@@ -273,6 +324,7 @@ onMounted(() => {
 }
 
 .secondDiv {
+  margin-top: 80px;
   display: flex;
   padding: 20px 100px;
   height: 90px;
@@ -336,28 +388,75 @@ onMounted(() => {
 
 .thirdDiv {
   display: flex;
-  padding: 20px 100px;
-}
-.thirdDiv .thirdLeft {
-  width: 800px;
-}
-.demonstration {
-  color: var(--el-text-color-secondary);
-}
+  padding: 20px 150px;
+  justify-content: space-between;
 
-.el-carousel__item h3 {
-  color: #475669;
-  opacity: 0.75;
-  line-height: 150px;
-  margin: 0;
-  text-align: center;
-}
+  .thirdLeft {
+    width: 42%;
 
-.el-carousel__item:nth-child(2n) {
-  background-color: #99a9bf;
-}
+    .block {
+      border-radius: 2em;
+      overflow: hidden;
+    }
+    .demonstration {
+      color: var(--el-text-color-secondary);
+    }
+    .el-carousel__item h3 {
+      color: #feffff;
+      line-height: 150px;
+      margin: 0;
+      text-align: center;
+    }
 
-.el-carousel__item:nth-child(2n + 1) {
-  background-color: #d3dce6;
+    .el-carousel__item:nth-child(2n) {
+      background-color: #99a9bf;
+    }
+
+    .el-carousel__item:nth-child(2n + 1) {
+      background-color: #d3dce6;
+    }
+  }
+
+  .thirdRight {
+    width: 56%;
+    height: 520px;
+    display: flex;
+    justify-content: space-between;
+    align-content: space-between;
+    flex-wrap: wrap;
+    .rcmdVideo {
+      width: 32%;
+      display: flex;
+      flex-direction: column;
+      .rcmdVideoImg {
+        width: 100%;
+        height: 70%;
+        border-radius: 0.5em;
+        margin-bottom: 5px;
+      }
+      .rcmdVideoTitle {
+        width: 100%;
+        height: 40px;
+        white-space: pre-wrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        line-height: 20px;
+        font-weight: bold;
+      }
+      .ownInfo {
+        margin-left: 5px;
+        display: flex;
+        align-items: center;
+        color: #adb1b6;
+        font-weight: bold;
+        height: 24px;
+        line-height: 24px;
+        font-size: 14px;
+      }
+    }
+  }
 }
 </style>

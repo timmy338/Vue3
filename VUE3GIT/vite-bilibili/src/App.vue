@@ -11,6 +11,7 @@ import { reactive, toRefs, ref } from "vue";
 <style lang="less" scoped>
 .scroll {
   width: auto;
+  padding-bottom: 1000px;
   white-space: nowrap;
   overflow-y: hidden;
   overflow-x: scroll;
