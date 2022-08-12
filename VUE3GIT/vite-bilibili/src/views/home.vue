@@ -15,14 +15,14 @@
 
   <div class="headDiv">
     <ul class="headLeft">
-      <li>
+      <li class="jello-horizontal">
         <font-awesome-icon class="icons" icon="fa-brands fa-bilibili" />
         <a>首页</a>
       </li>
-      <li v-for="tab in leftTabs">
-        <a class="shake shake-slow">{{ tab }}</a>
+      <li v-for="tab in leftTabs" class="jello-horizontal">
+        <a>{{ tab }}</a>
       </li>
-      <li>
+      <li class="jello-horizontal">
         <font-awesome-icon class="icons" icon="fa-download" />
         <a>下载客户端</a>
       </li>
@@ -39,7 +39,7 @@
       <li>
         <img class="avatar" :src="data.avatar" />
       </li>
-      <li v-for="tabs in rightTabs" class="rightTabs">
+      <li v-for="tabs in rightTabs" class="rightTabs jello-horizontal">
         <font-awesome-icon :icon="tabs.icon" class="rightIcons" />
         {{ tabs.name }}
       </li>
@@ -72,12 +72,12 @@
       </li>
     </ul>
     <ul class="secondMiddle">
-      <li v-for="tab in secondTabsMiddle">
+      <li v-for="tab in secondTabsMiddle" class="secondLiHover">
         <a>{{ tab }}</a>
       </li>
     </ul>
     <ul class="secondRight">
-      <li v-for="tab in secondTabsRight">
+      <li v-for="tab in secondTabsRight" class="textBlueHover">
         <font-awesome-icon class="secondRightIcons" :icon="tab.icon" />
         <a>{{ tab.name }}</a>
       </li>
@@ -110,13 +110,34 @@
     </div>
     <div class="thirdRight">
       <div v-for="tab in thirdVideo" class="rcmdVideo">
-        <img :src="tab.pic" class="rcmdVideoImg" />
-        <div class="rcmdVideoTitle">
+        <div class="rcmdVideoImgDiv">
+          <img :src="tab.pic" class="rcmdVideoImg" />
+          <div class="videoInfo">
+            <div class="videoInfoIcons">
+              <font-awesome-icon
+                icon="fa-brands fa-google-play"
+                style="font-size: 14px"
+              />
+              {{
+                tab.stat.view > 9999
+                  ? Math.floor(tab.stat.view / 1000) / 10 + "万"
+                  : tab.stat.view
+              }}
+              <font-awesome-icon icon="fa-solid fa-chart-simple" />
+              {{
+                tab.stat.danmaku > 9999
+                  ? Math.floor(tab.stat.danmaku / 1000) / 10 + "万"
+                  : tab.stat.danmaku
+              }}
+            </div>
+            {{ tab.duration }}
+          </div>
+        </div>
+        <div class="rcmdVideoTitle textBlueHover">
           {{ tab.title }}
         </div>
-        <div class="ownInfo">
+        <div class="ownInfo textBlueHover">
           <font-awesome-icon icon="fa-solid fa-id-badge" />
-
           <span style="margin: 0 5px">{{ tab.owner.name }}</span
           >{{ tab.pubdate }}
         </div>
@@ -217,12 +238,89 @@ onMounted(() => {
       let myDate = new Date(Number(data.thirdVideo[i].pubdate) * 1000);
       data.thirdVideo[i].pubdate =
         "· " + Number(myDate.getMonth() + 1) + "-" + myDate.getDate();
+
+      let min = Math.floor(+data.thirdVideo[i].duration / 60);
+      data.thirdVideo[i].duration =
+        (min < 10 ? "0" + min : min) +
+        ":" +
+        (+data.thirdVideo[i].duration % 60).toFixed(0);
     }
+
     console.log(res.data.item[0]);
   });
 });
 </script>
 <style lang="less" scoped>
+//css 字體變藍
+.textBlueHover:hover {
+  color: #00aeec !important;
+}
+//css果涷動畫
+.jello-horizontal:hover {
+  -webkit-animation: jello-horizontal 0.9s both;
+  animation: jello-horizontal 0.9s both;
+}
+
+@-webkit-keyframes jello-horizontal {
+  0% {
+    -webkit-transform: scale3d(1, 1, 1);
+    transform: scale3d(1, 1, 1);
+  }
+  30% {
+    -webkit-transform: scale3d(1.25, 0.75, 1);
+    transform: scale3d(1.25, 0.75, 1);
+  }
+  40% {
+    -webkit-transform: scale3d(0.75, 1.25, 1);
+    transform: scale3d(0.75, 1.25, 1);
+  }
+  50% {
+    -webkit-transform: scale3d(1.15, 0.85, 1);
+    transform: scale3d(1.15, 0.85, 1);
+  }
+  65% {
+    -webkit-transform: scale3d(0.95, 1.05, 1);
+    transform: scale3d(0.95, 1.05, 1);
+  }
+  75% {
+    -webkit-transform: scale3d(1.05, 0.95, 1);
+    transform: scale3d(1.05, 0.95, 1);
+  }
+  100% {
+    -webkit-transform: scale3d(1, 1, 1);
+    transform: scale3d(1, 1, 1);
+  }
+}
+@keyframes jello-horizontal {
+  0% {
+    -webkit-transform: scale3d(1, 1, 1);
+    transform: scale3d(1, 1, 1);
+  }
+  30% {
+    -webkit-transform: scale3d(1.25, 0.75, 1);
+    transform: scale3d(1.25, 0.75, 1);
+  }
+  40% {
+    -webkit-transform: scale3d(0.75, 1.25, 1);
+    transform: scale3d(0.75, 1.25, 1);
+  }
+  50% {
+    -webkit-transform: scale3d(1.15, 0.85, 1);
+    transform: scale3d(1.15, 0.85, 1);
+  }
+  65% {
+    -webkit-transform: scale3d(0.95, 1.05, 1);
+    transform: scale3d(0.95, 1.05, 1);
+  }
+  75% {
+    -webkit-transform: scale3d(1.05, 0.95, 1);
+    transform: scale3d(1.05, 0.95, 1);
+  }
+  100% {
+    -webkit-transform: scale3d(1, 1, 1);
+    transform: scale3d(1, 1, 1);
+  }
+}
 .topImg {
   position: relative;
   #img {
@@ -251,8 +349,13 @@ onMounted(() => {
     width: 30%;
     display: flex;
     flex-direction: row;
+
+    li {
+      height: 15px;
+    }
     .icons {
       padding-right: 5px;
+      font-weight: normal;
     }
     li,
     .icons {
@@ -298,14 +401,12 @@ onMounted(() => {
     .rightTabs {
       display: flex;
       flex-direction: column;
-
       margin-left: 30px;
       /* text-shadow: rgb(10, 10, 10) 0.3em 0.3em 0.4em; */
-
       cursor: pointer;
     }
     .rightIcons {
-      font-size: 23px;
+      font-size: 22px;
       margin-bottom: 5px;
     }
     .upLoad {
@@ -354,6 +455,10 @@ onMounted(() => {
     justify-content: space-around;
     align-content: space-around;
     flex-wrap: wrap;
+    .secondLiHover:hover {
+      color: black;
+      background-color: #e1e3e5;
+    }
     li {
       margin-left: 10px;
       width: 78px;
@@ -364,6 +469,7 @@ onMounted(() => {
       color: #616d83;
       border-radius: 0.3em;
       margin-bottom: 5px;
+      cursor: pointer;
     }
   }
 
@@ -382,20 +488,21 @@ onMounted(() => {
     }
     li {
       width: 100px;
+      cursor: pointer;
     }
   }
 }
 
 .thirdDiv {
   display: flex;
-  padding: 20px 150px;
+  padding: 20px 110px;
   justify-content: space-between;
 
   .thirdLeft {
     width: 42%;
 
     .block {
-      border-radius: 2em;
+      border-radius: 0.5em;
       overflow: hidden;
     }
     .demonstration {
@@ -428,33 +535,58 @@ onMounted(() => {
       width: 32%;
       display: flex;
       flex-direction: column;
-      .rcmdVideoImg {
+      .rcmdVideoImgDiv {
+        position: relative;
         width: 100%;
         height: 70%;
-        border-radius: 0.5em;
-        margin-bottom: 5px;
+        margin-bottom: 10px;
+        .rcmdVideoImg {
+          width: 100%;
+          height: 100%;
+          border-radius: 0.5em;
+        }
+        .videoInfo {
+          /* mix-blend-mode: difference; */
+          position: absolute;
+          bottom: 8px;
+          width: 95%;
+          padding: 5px 10px;
+          display: flex;
+          justify-content: space-between;
+          color: rgba(255,255 , 255, 0.9);
+           text-shadow: -1px 0 rgba(0, 0, 0, 0.616), 0 1px rgba(0, 0, 0, 0.73),
+      1px 0 rgba(0, 0, 0, 0.711), 0 -1px rgba(0, 0, 0, 0.666);
+          /* text-shadow: 1px 1px 0px black, 2px 2px 0px black; */
+          .videoInfoIcons {
+            
+            line-height: 15px;
+          }
+        }
       }
+
       .rcmdVideoTitle {
         width: 100%;
-        height: 40px;
+        height: 50px;
+        font-size: 15px;
         white-space: pre-wrap;
         overflow: hidden;
         text-overflow: ellipsis;
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
-        line-height: 20px;
+        line-height: 25px;
         font-weight: bold;
+        cursor: pointer;
       }
       .ownInfo {
-        margin-left: 5px;
         display: flex;
         align-items: center;
         color: #adb1b6;
-        font-weight: bold;
+        font-weight: 550;
         height: 24px;
         line-height: 24px;
         font-size: 14px;
+        cursor: pointer;
       }
     }
   }

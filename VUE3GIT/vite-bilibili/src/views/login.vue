@@ -99,6 +99,7 @@ const submitCode = () => {
       if (typeof res.data === "object") {
         setCookie(res.data.url);
       }
+      router.push("/home");
       console.log("登錄成功");
     } else {
       alert("請先掃瞄2維碼");

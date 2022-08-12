@@ -47,7 +47,7 @@ export const getUserInfo=():Promise<userInfo>=>{
 
 export type rcmdVideo={
     pic:string,
-    duration:number,
+    duration:number|string,
     title:string,
     pubdate:number|string,
     owner:{
@@ -56,7 +56,8 @@ export type rcmdVideo={
     }
     stat:{
         view:number,
-        like:number
+        like:number,
+        danmaku:number
     }
 }
 

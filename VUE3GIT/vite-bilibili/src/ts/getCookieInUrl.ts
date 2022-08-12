@@ -8,16 +8,16 @@ export function setCookie(url: string) {
     let bili_jct: RegExpMatchArray | null = url.match("bili_jct=\\w+");
 
     if (DedeUserID != null) {
-        Cookie.set('DedeUserID', DedeUserID[0].substring(11), { expires: 7 })
+        Cookie.set('DedeUserID', DedeUserID[0].substring(11), { expires:17 })
     }
     if (DedeUserID__ckMd5 != null) {
-        Cookie.set('DedeUserID__ckMd5', DedeUserID__ckMd5[0].substring(18), { expires: 7 })
+        Cookie.set('DedeUserID__ckMd5', DedeUserID__ckMd5[0].substring(18), { expires: 17 })
     }
     if (SESSDATA != null) {
-        Cookie.set('SESSDATA', SESSDATA[0].substring(9), { expires: 7 })
+        Cookie.set('SESSDATA', SESSDATA[0].substring(9), { expires: 17 })
     }
     if (bili_jct != null) {
-        Cookie.set('bili_jct', bili_jct[0].substring(9), { expires: 7 })
+        Cookie.set('bili_jct', bili_jct[0].substring(9), { expires: 17 })
     }
 
 
