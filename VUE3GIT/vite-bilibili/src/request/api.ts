@@ -46,6 +46,7 @@ export const getUserInfo=():Promise<userInfo>=>{
 }
 
 export type rcmdVideo={
+    bvid:string,
     pic:string,
     duration:number|string,
     title:string,
@@ -71,6 +72,7 @@ export const getHomePageRcmdVideo=():Promise<recommendVideo>=>{
     return request.get('/api/x/web-interface/index/top/rcmd?version=1&ps=3');
 }
 
-export const getHomeCarousel=():Promise<unknown>=>{
-    return request.get('/api/x/web-interface/index/top/rcmd?version=1&ps=3');
+//視頻api
+export const getVideo=(bv:string):Promise<unknown>=>{
+    return request.get('/api/x/web-interface/view?bvid='+bv);
 }

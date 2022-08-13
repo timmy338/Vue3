@@ -110,37 +110,7 @@
     </div>
     <div class="thirdRight">
       <div v-for="tab in thirdVideo" class="rcmdVideo">
-        <div class="rcmdVideoImgDiv">
-          <img :src="tab.pic" class="rcmdVideoImg" />
-          <div class="videoInfo">
-            <div class="videoInfoIcons">
-              <font-awesome-icon
-                icon="fa-brands fa-google-play"
-                style="font-size: 14px"
-              />
-              {{
-                tab.stat.view > 9999
-                  ? Math.floor(tab.stat.view / 1000) / 10 + "万"
-                  : tab.stat.view
-              }}
-              <font-awesome-icon icon="fa-solid fa-chart-simple" />
-              {{
-                tab.stat.danmaku > 9999
-                  ? Math.floor(tab.stat.danmaku / 1000) / 10 + "万"
-                  : tab.stat.danmaku
-              }}
-            </div>
-            {{ tab.duration }}
-          </div>
-        </div>
-        <div class="rcmdVideoTitle textBlueHover">
-          {{ tab.title }}
-        </div>
-        <div class="ownInfo textBlueHover">
-          <font-awesome-icon icon="fa-solid fa-id-badge" />
-          <span style="margin: 0 5px">{{ tab.owner.name }}</span
-          >{{ tab.pubdate }}
-        </div>
+        <ColumnVideo :videoData="tab"> </ColumnVideo>
       </div>
     </div>
   </div>
@@ -151,6 +121,9 @@ import { reactive, toRefs, ref, onMounted } from "vue";
 import { getUserInfo, getHomePageRcmdVideo, rcmdVideo } from "../request/api";
 //搜索條
 import { Search } from "@element-plus/icons-vue";
+//視頻組件化
+import ColumnVideo from "../components/columnVideo.vue";
+
 const input1 = ref("");
 const data = reactive({
   leftTabs: ["番剧", "直播", "游戏中心", "会员购", "漫画", "赛事"],
@@ -251,76 +224,8 @@ onMounted(() => {
 });
 </script>
 <style lang="less" scoped>
-//css 字體變藍
-.textBlueHover:hover {
-  color: #00aeec !important;
-}
-//css果涷動畫
-.jello-horizontal:hover {
-  -webkit-animation: jello-horizontal 0.9s both;
-  animation: jello-horizontal 0.9s both;
-}
 
-@-webkit-keyframes jello-horizontal {
-  0% {
-    -webkit-transform: scale3d(1, 1, 1);
-    transform: scale3d(1, 1, 1);
-  }
-  30% {
-    -webkit-transform: scale3d(1.25, 0.75, 1);
-    transform: scale3d(1.25, 0.75, 1);
-  }
-  40% {
-    -webkit-transform: scale3d(0.75, 1.25, 1);
-    transform: scale3d(0.75, 1.25, 1);
-  }
-  50% {
-    -webkit-transform: scale3d(1.15, 0.85, 1);
-    transform: scale3d(1.15, 0.85, 1);
-  }
-  65% {
-    -webkit-transform: scale3d(0.95, 1.05, 1);
-    transform: scale3d(0.95, 1.05, 1);
-  }
-  75% {
-    -webkit-transform: scale3d(1.05, 0.95, 1);
-    transform: scale3d(1.05, 0.95, 1);
-  }
-  100% {
-    -webkit-transform: scale3d(1, 1, 1);
-    transform: scale3d(1, 1, 1);
-  }
-}
-@keyframes jello-horizontal {
-  0% {
-    -webkit-transform: scale3d(1, 1, 1);
-    transform: scale3d(1, 1, 1);
-  }
-  30% {
-    -webkit-transform: scale3d(1.25, 0.75, 1);
-    transform: scale3d(1.25, 0.75, 1);
-  }
-  40% {
-    -webkit-transform: scale3d(0.75, 1.25, 1);
-    transform: scale3d(0.75, 1.25, 1);
-  }
-  50% {
-    -webkit-transform: scale3d(1.15, 0.85, 1);
-    transform: scale3d(1.15, 0.85, 1);
-  }
-  65% {
-    -webkit-transform: scale3d(0.95, 1.05, 1);
-    transform: scale3d(0.95, 1.05, 1);
-  }
-  75% {
-    -webkit-transform: scale3d(1.05, 0.95, 1);
-    transform: scale3d(1.05, 0.95, 1);
-  }
-  100% {
-    -webkit-transform: scale3d(1, 1, 1);
-    transform: scale3d(1, 1, 1);
-  }
-}
+
 .topImg {
   position: relative;
   #img {
@@ -535,59 +440,6 @@ onMounted(() => {
       width: 32%;
       display: flex;
       flex-direction: column;
-      .rcmdVideoImgDiv {
-        position: relative;
-        width: 100%;
-        height: 70%;
-        margin-bottom: 10px;
-        .rcmdVideoImg {
-          width: 100%;
-          height: 100%;
-          border-radius: 0.5em;
-        }
-        .videoInfo {
-          /* mix-blend-mode: difference; */
-          position: absolute;
-          bottom: 8px;
-          width: 95%;
-          padding: 5px 10px;
-          display: flex;
-          justify-content: space-between;
-          color: rgba(255,255 , 255, 0.9);
-           text-shadow: -1px 0 rgba(0, 0, 0, 0.616), 0 1px rgba(0, 0, 0, 0.73),
-      1px 0 rgba(0, 0, 0, 0.711), 0 -1px rgba(0, 0, 0, 0.666);
-          /* text-shadow: 1px 1px 0px black, 2px 2px 0px black; */
-          .videoInfoIcons {
-            
-            line-height: 15px;
-          }
-        }
-      }
-
-      .rcmdVideoTitle {
-        width: 100%;
-        height: 50px;
-        font-size: 15px;
-        white-space: pre-wrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        line-height: 25px;
-        font-weight: bold;
-        cursor: pointer;
-      }
-      .ownInfo {
-        display: flex;
-        align-items: center;
-        color: #adb1b6;
-        font-weight: 550;
-        height: 24px;
-        line-height: 24px;
-        font-size: 14px;
-        cursor: pointer;
-      }
     }
   }
 }

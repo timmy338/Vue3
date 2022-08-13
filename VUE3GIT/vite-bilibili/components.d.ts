@@ -8,6 +8,8 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     404View: typeof import('./src/components/404View.vue')['default']
+    Column: typeof import('./src/components/column.vue')['default']
+    ColumnVideo: typeof import('./src/components/columnVideo.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCarousel: typeof import('element-plus/es')['ElCarousel']
     ElCarouselItem: typeof import('element-plus/es')['ElCarouselItem']
@@ -19,5 +21,6 @@ declare module '@vue/runtime-core' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     TopButton: typeof import('./src/components/topButton.vue')['default']
+    TopList: typeof import('./src/components/topList.vue')['default']
   }
 }
