@@ -207,17 +207,11 @@ onMounted(() => {
   });
   getHomePageRcmdVideo().then((res) => {
     data.thirdVideo = res.data.item.slice(0, 6);
-    for (let i = 0; i < data.thirdVideo.length; i++) {
+/*     for (let i = 0; i < data.thirdVideo.length; i++) {
       let myDate = new Date(Number(data.thirdVideo[i].pubdate) * 1000);
       data.thirdVideo[i].pubdate =
         "· " + Number(myDate.getMonth() + 1) + "-" + myDate.getDate();
-
-      let min = Math.floor(+data.thirdVideo[i].duration / 60);
-      data.thirdVideo[i].duration =
-        (min < 10 ? "0" + min : min) +
-        ":" +
-        (+data.thirdVideo[i].duration % 60).toFixed(0);
-    }
+    } */
 
     console.log(res.data.item[0]);
   });

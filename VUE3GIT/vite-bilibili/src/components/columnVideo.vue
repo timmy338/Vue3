@@ -5,19 +5,11 @@
     <div class="videoInfo">
       <div class="videoInfoIcons">
         <font-awesome-icon icon="fa-brands fa-google-play" style="font-size: 14px" />
-        {{
-          videoData.stat.view > 9999
-            ? Math.floor(videoData.stat.view / 1000) / 10 + "万"
-            : videoData.stat.view
-        }}
+        {{ millionsHandle(videoData.stat.view) }}
         <font-awesome-icon icon="fa-solid fa-chart-simple" />
-        {{
-          videoData.stat.danmaku > 9999
-            ? Math.floor(videoData.stat.danmaku / 1000) / 10 + "万"
-            : videoData.stat.danmaku
-        }}
+        {{ millionsHandle(videoData.stat.danmaku) }}
       </div>
-      {{ videoData.duration }}
+      {{ durationHandle(videoData.duration) }}
     </div>
   </a>
   <div class="rcmdVideoTitle textBlueHover">
@@ -27,28 +19,27 @@
   <div class="ownInfo textBlueHover">
     <font-awesome-icon icon="fa-solid fa-id-badge" />
     <span style="margin: 0 5px">{{ videoData.owner.name }}</span
-    >{{ videoData.pubdate }}
+    >{{ monthDayHandle(videoData.pubdate) }}
   </div>
 </template>
 
 <script lang="ts" setup>
-import { reactive, toRefs, ref, defineProps } from "vue";
 import { useRouter } from "vue-router";
 import { rcmdVideo } from "../request/api";
-
+import { millionsHandle, durationHandle, monthDayHandle } from "../ts/global";
 
 //獲取當前頁面的對象
 let router = useRouter();
-const props=defineProps<{
+const props = defineProps<{
   videoData: rcmdVideo;
 }>();
 
 function gotoVideoPage() {
   router.push({
-    path:'/video',
-    query:{
-        bv:props.videoData.bvid,
-    }
+    path: "/video",
+    query: {
+      bv: props.videoData.bvid,
+    },
   });
 }
 </script>

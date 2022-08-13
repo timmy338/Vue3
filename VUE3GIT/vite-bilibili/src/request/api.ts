@@ -48,9 +48,9 @@ export const getUserInfo=():Promise<userInfo>=>{
 export type rcmdVideo={
     bvid:string,
     pic:string,
-    duration:number|string,
+    duration:number,
     title:string,
-    pubdate:number|string,
+    pubdate:number,
     owner:{
         name:string,
         face:string
@@ -72,7 +72,28 @@ export const getHomePageRcmdVideo=():Promise<recommendVideo>=>{
     return request.get('/api/x/web-interface/index/top/rcmd?version=1&ps=3');
 }
 
+export interface videoPageInfo{
+    data: {
+        desc:string,
+        title:string,
+        pubdate:number,
+        stat:{
+            view:number,
+            danmaku:number,
+            favorite:number,
+            like:number,
+            coin:number,
+            share:number
+        }
+        honor_reply:{
+            honor:{
+                desc:string
+            }
+        }
+    };
+}
+
 //視頻api
-export const getVideo=(bv:string):Promise<unknown>=>{
+export const getVideo=(bv:string):Promise<videoPageInfo>=>{
     return request.get('/api/x/web-interface/view?bvid='+bv);
 }
