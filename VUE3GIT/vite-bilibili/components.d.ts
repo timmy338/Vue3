@@ -18,6 +18,7 @@ declare module '@vue/runtime-core' {
     ElInput: typeof import('element-plus/es')['ElInput']
     ElRow: typeof import('element-plus/es')['ElRow']
     LoginView: typeof import('./src/components/LoginView.vue')['default']
+    PlayVideo: typeof import('./src/components/playVideo.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     TopButton: typeof import('./src/components/topButton.vue')['default']

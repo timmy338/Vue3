@@ -88,7 +88,7 @@ export interface videoPageInfo{
         honor_reply:{
             honor:{
                 desc:string
-            }
+            }[]
         }
     };
 }
