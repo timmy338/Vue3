@@ -20,9 +20,9 @@ export default {
   mounted() {
     this.instance = new Artplayer({
       url:
-        "https://upos-hz-mirrorakam.akamaized.net/upgcxcode/28/17/803001728/803001728_nb3-1-64.flv?e=ig8euxZM2rNcNbRVhwdVhwdlhWdVhwdVhoNvNC8BqJIzNbfqXBvEqxTEto8BTrNvN0GvT90W5JZMkX_YN0MvXg8gNEV4NC8xNEV4N03eN0B5tZlqNxTEto8BTrNvNeZVuJ10Kj_g2UB02J0mN0B5tZlqNCNEto8BTrNvNC7MTX502C8f2jmMQJ6mqF2fka1mqx6gqj0eN0B599M=&uipk=5&nbs=1&deadline=1660561095&gen=playurlv2&os=akam&oi=2053435398&trid=0b330696889f472ba296bcac56b2a707u&mid=31088511&platform=pc&upsig=bd4617ae10f6c71dd599b7a36a0f895d&uparams=e,uipk,nbs,deadline,gen,os,oi,trid,mid,platform&hdnts=exp=1660561095~hmac=383707fc97e21d36a8c7d169daa40fa15b495f46c593af7fecbd1dce1cc074d6&bvc=vod&nettype=0&orderid=0,1&agrr=1&bw=69961&logo=80000000",
+        "https://upos-hz-mirrorakam.akamaized.net/upgcxcode/38/87/801458738/801458738_u1-1-64.flv?e=ig8euxZM2rNcNbNz7bdVhwdlhbhjhwdVhoNvNC8BqJIzNbfqXBvEqxTEto8BTrNvN0GvT90W5JZMkX_YN0MvXg8gNEV4NC8xNEV4N03eN0B5tZlqNxTEto8BTrNvNeZVuJ10Kj_g2UB02J0mN0B5tZlqNCNEto8BTrNvNC7MTX502C8f2jmMQJ6mqF2fka1mqx6gqj0eN0B599M=&uipk=5&nbs=1&deadline=1660643168&gen=playurlv2&os=akam&oi=2053435398&trid=189deb2c1a7f483cbe5407936977dac1u&mid=31088511&platform=pc&upsig=555a242440451b21e2312016ec0ed7cb&uparams=e,uipk,nbs,deadline,gen,os,oi,trid,mid,platform&hdnts=exp=1660643168~hmac=40c904fab191bc16ff354fcaf92147d9d81c1bd9309190ec293702e6abaf78ca&bvc=vod&nettype=0&orderid=0,1&agrr=1&bw=236936&logo=80000000",
       container: this.$refs.artRef,
-      autoplay: true,
+      /* autoplay: true, */
       customType: {
         flv: function (video, url) {
           if (flvjs.isSupported()) {

@@ -84,6 +84,7 @@ onMounted(() => {
     position: fixed;
     width: 100%;
     background-color: white;
+    z-index: 99;
     .headDiv {
       width: auto;
       padding: 0 20px;

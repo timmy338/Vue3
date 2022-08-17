@@ -1,12 +1,12 @@
 import request from './request'
 
-interface apiBasic{
+interface apiBasic {
     code: number;
     status: boolean;
     ts: number;
 }
 
-interface codeLoginUrl  extends apiBasic{
+interface codeLoginUrl extends apiBasic {
     data: {
         url: string;
         oauthKey: string;
@@ -21,79 +21,90 @@ export const getCodeLoginUrl = (): Promise<codeLoginUrl> => {
 interface codeLoginInfo {
     code?: number;
     status: boolean;
-    message?:string;
+    message?: string;
     ts?: number;
-    data: number|{
+    data: number | {
         url: string;
         refresh_token: string;
-        timestamp:number;
+        timestamp: number;
     }
 }
 
 //2維碼登錄api
-export const getCodeLoginInfo=(oauthKey:string):Promise<codeLoginInfo>=>{
-    return request.post('/passport/qrcode/getLoginInfo?oauthKey='+oauthKey)
+export const getCodeLoginInfo = (oauthKey: string): Promise<codeLoginInfo> => {
+    return request.post('/passport/qrcode/getLoginInfo?oauthKey=' + oauthKey)
 }
 
-interface userInfo extends apiBasic{
+interface userInfo extends apiBasic {
     data: {
-        face:string;
+        face: string;
     };
 }
 //用戶信息api
-export const getUserInfo=():Promise<userInfo>=>{
+export const getUserInfo = (): Promise<userInfo> => {
     return request.get('/api/nav');
 }
 
-export type rcmdVideo={
-    bvid:string,
-    pic:string,
-    duration:number,
-    title:string,
-    pubdate:number,
-    owner:{
-        name:string,
-        face:string
+export type rcmdVideo = {
+    bvid: string,
+    pic: string,
+    duration: number,
+    title: string,
+    pubdate: number,
+    owner: {
+        name: string,
+        face: string
     }
-    stat:{
-        view:number,
-        like:number,
-        danmaku:number
+    stat: {
+        view: number,
+        like: number,
+        danmaku: number
     }
 }
 
-interface recommendVideo extends apiBasic{
+interface recommendVideo extends apiBasic {
     data: {
-        item:rcmdVideo[];
+        item: rcmdVideo[];
     };
 }
 //首頁推薦視頻
-export const getHomePageRcmdVideo=():Promise<recommendVideo>=>{
+export const getHomePageRcmdVideo = (): Promise<recommendVideo> => {
     return request.get('/api/x/web-interface/index/top/rcmd?version=1&ps=3');
 }
 
-export interface videoPageInfo{
+export interface videoPageInfo {
     data: {
-        desc:string,
-        title:string,
-        pubdate:number,
-        stat:{
-            view:number,
-            danmaku:number,
-            favorite:number,
-            like:number,
-            coin:number,
-            share:number
+        desc: string,
+        title: string,
+        pubdate: number,
+        stat: {
+            view: number,
+            danmaku: number,
+            favorite: number,
+            like: number,
+            coin: number,
+            share: number
         }
-        honor_reply:{
-            honor:{
-                desc:string
+        honor_reply: {
+            honor: {
+                desc: string
             }[]
         }
     };
 }
 
+
 //視頻api
-export const getVideo=(bv:string):Promise<videoPageInfo>=>{
-    return request.get('/api/x/web-interface/view?bvid='+bv);
+export const getVideo = (bv: string): Promise<videoPageInfo> => {
+    return request.get('/api/x/web-interface/view?bvid=' + bv);
+}
+
+export type videoTag={ tag_name: string, type: number }
+interface videoTags {
+    data: videoTag[]
+}
+
+//視頻tag
+export const getVideoTags = (bv: string): Promise<videoTags> => {
+    return request.get('/api/x/tag/archive/tags?bvid=' + bv)
 }

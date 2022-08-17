@@ -23,5 +23,6 @@ declare module '@vue/runtime-core' {
     RouterView: typeof import('vue-router')['RouterView']
     TopButton: typeof import('./src/components/topButton.vue')['default']
     TopList: typeof import('./src/components/topList.vue')['default']
+    VideoTags: typeof import('./src/components/videoTags.vue')['default']
   }
 }
