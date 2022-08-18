@@ -10,6 +10,7 @@ declare module '@vue/runtime-core' {
     404View: typeof import('./src/components/404View.vue')['default']
     Column: typeof import('./src/components/column.vue')['default']
     ColumnVideo: typeof import('./src/components/columnVideo.vue')['default']
+    CommetnRely: typeof import('./src/components/commetnRely.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCarousel: typeof import('element-plus/es')['ElCarousel']
     ElCarouselItem: typeof import('element-plus/es')['ElCarouselItem']
