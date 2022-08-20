@@ -60,48 +60,71 @@
         </div>
       </div>
 
-      <div class="comments" v-if="videoComments[0]">
+      <div
+        class="comments"
+        v-if="videoComments"
+        v-for="(commentRoot, index) of videoComments"
+      >
         <div>
-          <img class="ownerAvatar" :src="videoComments[0].member.avatar" />
+          <img class="ownerAvatar" :src="commentRoot.member.avatar" />
         </div>
         <div class="divRight">
           <div class="ownerName">
             <span style="color: #fb7299">
-              {{ videoComments[0].member.uname }}
+              {{ commentRoot.member.uname }}
             </span>
 
             <div style="margin-left: 10px">
               <text class="level">
-                LV{{ videoComments[0].member.level_info.current_level }}+
+                LV{{ commentRoot.member.level_info.current_level }}+
               </text>
             </div>
             <div>
-              <text class="up" v-if="videoComments[0].member.is_senior_member == 1"
-                >UP</text
-              >
+              <text class="up" v-if="commentRoot.mid == videoUP">UP</text>
             </div>
           </div>
-          <div class="content">{{ videoComments[0].content.message }}</div>
+          <div class="content">{{ commentRoot.content.message }}</div>
           <div class="contentInfo">
             {{ yearToSecondHandle(videoComments[0].ctime) }}
-            <div>
+            <div class="textBlueHover">
               <font-awesome-icon
                 icon="fa-solid fa-thumbs-up"
                 style="margin-right: 5px"
               />{{ videoComments[0].like }}
             </div>
-            <div><font-awesome-icon icon="fa-solid fa-thumbs-down" /></div>
+            <div class="textBlueHover">
+              <font-awesome-icon icon="fa-solid fa-thumbs-down" />
+            </div>
             <div class="rely">回複</div>
           </div>
-          <div v-for="tab in videoComments[0].replies">
-            <CommetnRely :commentData="tab" />
+          <div v-for="commentRely in commentRoot.replies">
+            <CommentRely :commentData="commentRely" :up="videoUP" />
           </div>
-          <div class="more">
-            {{ videoComments[0].reply_control.sub_reply_entry_text }},<text
-              style="color: #00a1d6" class="moreBtn"
+          <div
+            class="more"
+            v-if="commentRoot.rcount > 1 && (!commentRoot.folder.is_folded)"
+          >
+            {{ commentRoot.reply_control.sub_reply_entry_text }},<text
+              style="color: #00a1d6"
+              class="moreBtn"
+              @click="changeRootReplies(videoInfo.aid, commentRoot.rpid, index)"
             >
               点击查看</text
             >
+          </div>
+          <div
+            class="morePages"
+            style="margin-top: 10px;"
+            v-if="commentRoot.rcount > 10 && commentRoot.folder.is_folded"
+          >
+            <div class="pagination-block">
+              <el-pagination
+                small
+                layout="prev, pager, next"
+                :total="commentRoot.rcount"
+                @current-change="(val:number) => handleCurrentChange(videoInfo.aid, commentRoot.rpid,index,commentRoot.folder.is_folded,val)"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -119,6 +142,7 @@ import {
   videoTag,
   getVideoComments,
   reply,
+  getRootReplies,
 } from "../request/api";
 import { useRoute } from "vue-router";
 //數字格式規範化
@@ -127,7 +151,7 @@ import { millionsHandle, yearToSecondHandle } from "../ts/global";
 import PlayVideo from "../components/playVideo.vue";
 import TopList from "../components/topList.vue";
 import VidoeTags from "../components/videoTags.vue";
-import CommetnRely from "../components/commetnRely.vue";
+import CommentRely from "../components/commentRely.vue";
 
 const data = reactive({
   bv: "BV1US4y1s7aG",
@@ -136,13 +160,14 @@ const data = reactive({
   videoSrc: "",
   videoTags: [] as videoTag[],
   videoComments: [] as reply[],
+  videoUP: 0,
 });
 
 //從別頁傳入bv號
 /* const Route=useRoute();
 data.bv=""+Route.query.bv; */
 
-let { videoInfo, videoSrc, videoTags, videoComments } = toRefs(data);
+let { videoInfo, videoSrc, videoTags, videoComments, videoUP } = toRefs(data);
 
 //請求視頻API
 getVideo(data.bv)
@@ -165,25 +190,48 @@ getVideoTags(data.bv)
 getVideoComments(data.av)
   .then((res) => {
     data.videoComments = res.data.replies;
+    data.videoUP = res.data.top.upper.mid;
     console.log("獲取成功");
   })
   .catch(() => {
     alert("獲取視頻Comments失敗");
   });
-FileSystemDirectoryHandle;
+
+//請求某個留言詳情(第一次展開)
+function changeRootReplies(oid: number, root: number, index: number) {
+  getRootReplies(oid, root, 1)
+    .then((res) => {
+      data.videoComments[index].replies = res.data.replies;
+      data.videoComments[index].folder.is_folded = true;
+      console.log("獲取某個留言詳情");
+    })
+    .catch(() => {
+      alert("獲取某個留言詳情失敗");
+    });
+}
+//請求某個留言詳情(展開後換頁)
+function handleCurrentChange(oid: number, root: number,index: number,test:boolean,page:number) {
+  console.log(test);
+    getRootReplies(oid, root, page)
+    .then((res) => {
+      data.videoComments[index].replies = res.data.replies;
+      console.log("獲取某個留言詳情");
+    })
+    .catch(() => {
+      alert("獲取某個留言詳情失敗");
+    });
+}
 </script>
 <style lang="less" scoped>
 .videoView {
   width: 100%;
-  height: 300px;
   margin-top: 20px;
   padding: 0 453px;
   display: flex;
-  background-color: rgb(255, 156, 156);
+  background-color: rgb(255, 187, 187);
   .leftVideoView {
     width: 885px;
-    height: 300px;
-    background-color: aquamarine;
+    background-color: white;
     .detail {
       padding-top: 5px;
       text {
@@ -266,6 +314,7 @@ FileSystemDirectoryHandle;
     }
     .comments {
       display: flex;
+      margin-top: 30px;
       .ownerAvatar {
         width: 41px;
         height: 41px;
@@ -274,7 +323,7 @@ FileSystemDirectoryHandle;
       .divRight {
         width: 100%;
         margin-left: 10px;
-        padding-bottom: 10px;
+        padding-bottom: 20px;
         border-bottom: 1px solid rgba(143, 143, 143, 0.228);
         .ownerName {
           display: flex;
@@ -300,7 +349,8 @@ FileSystemDirectoryHandle;
           font-size: 15px;
           margin-top: 10px;
           margin-bottom: 10px;
-          word-break: break-all;
+          line-height: 20px;
+          white-space: pre-line;
         }
         .contentInfo {
           display: flex;
@@ -324,8 +374,8 @@ FileSystemDirectoryHandle;
           margin-top: 10px;
           color: #99a2aa;
           font-size: 12px;
-          .moreBtn:hover{
-            background-color: #E5E9EF;
+          .moreBtn:hover {
+            background-color: #e5e9ef;
             border-radius: 0.2em;
           }
         }

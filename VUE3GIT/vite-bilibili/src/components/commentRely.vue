@@ -1,12 +1,10 @@
 <!--  -->
 <template>
-  <div style="display: flex">
+  <div style="display: flex; margin-top: 10px">
     <img class="ownerAvatar" :src="commentData.member.avatar" />
-    <div style="margin-left:10px ;">
+    <div style="margin-left: 10px">
       <div class="content">
-        <span style="color: #fb7299">
-          {{ commentData.member.uname }}
-        </span>
+        <span style="color: #fb7299"> {{ commentData.member.uname }} </span>
 
         <div style="margin-left: 10px">
           <text class="level">
@@ -14,20 +12,20 @@
           </text>
         </div>
         <div>
-          <text class="up" v-if="commentData.member.is_senior_member == 1">UP</text>
+          <text class="up" v-if="commentData.mid == up">UP</text>
         </div>
-        <div style="margin-left: 10px">
+        <div style="margin-left: 10px; white-space: pre-line;">
           {{ commentData.content.message }}
         </div>
       </div>
-      <div class="contentInfo">
+      <div class="contentInfo" >
         {{ yearToSecondHandle(commentData.ctime) }}
-        <div>
+        <div class="textBlueHover">
           <font-awesome-icon icon="fa-solid fa-thumbs-up" style="margin-right: 5px" />{{
             commentData.like
           }}
         </div>
-        <div><font-awesome-icon icon="fa-solid fa-thumbs-down" /></div>
+        <div class="textBlueHover"><font-awesome-icon icon="fa-solid fa-thumbs-down" /></div>
         <div class="rely">回複</div>
       </div>
     </div>
@@ -42,6 +40,7 @@ import { reply } from "../request/api";
 
 const props = defineProps<{
   commentData: reply;
+  up: number;
 }>();
 </script>
 <style lang="less" scoped>
@@ -66,7 +65,7 @@ const props = defineProps<{
     font-size: 12px;
     margin-left: 10px;
     background-color: #fb7299;
-    transform:scale(2);
+    transform: scale(2);
   }
   .level {
     padding: 0 1px;
@@ -74,7 +73,6 @@ const props = defineProps<{
     border-radius: 0.2em;
     color: white;
     background-color: red;
-    
   }
 }
 .contentInfo {

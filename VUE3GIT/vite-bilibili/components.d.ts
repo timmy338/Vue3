@@ -7,18 +7,16 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
-    404View: typeof import('./src/components/404View.vue')['default']
-    Column: typeof import('./src/components/column.vue')['default']
     ColumnVideo: typeof import('./src/components/columnVideo.vue')['default']
-    CommetnRely: typeof import('./src/components/commetnRely.vue')['default']
+    CommentRely: typeof import('./src/components/commentRely.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCarousel: typeof import('element-plus/es')['ElCarousel']
     ElCarouselItem: typeof import('element-plus/es')['ElCarouselItem']
     ElForm: typeof import('element-plus/es')['ElForm']
     ElFormItem: typeof import('element-plus/es')['ElFormItem']
     ElInput: typeof import('element-plus/es')['ElInput']
+    ElPagination: typeof import('element-plus/es')['ElPagination']
     ElRow: typeof import('element-plus/es')['ElRow']
-    LoginView: typeof import('./src/components/LoginView.vue')['default']
     PlayVideo: typeof import('./src/components/playVideo.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

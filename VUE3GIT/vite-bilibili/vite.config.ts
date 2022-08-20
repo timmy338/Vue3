@@ -20,7 +20,6 @@ export default defineConfig({
   // 跨域
   server: {
     proxy: {
-
       "/passport": {
         target: "http://passport.bilibili.com",
         changeOrigin: true,
@@ -31,7 +30,7 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace("/api", ""),
         headers: {                  
-          Referer: "https://www.bilibili.com/"
+          Referer: "https://www.bilibili.com/",
         },
       },
 

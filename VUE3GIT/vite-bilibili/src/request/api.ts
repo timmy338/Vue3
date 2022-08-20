@@ -74,6 +74,7 @@ export const getHomePageRcmdVideo = (): Promise<recommendVideo> => {
 
 export interface videoPageInfo {
     data: {
+        aid:number,
         desc: string,
         title: string,
         pubdate: number,
@@ -109,11 +110,12 @@ export const getVideoTags = (bv: string): Promise<videoTags> => {
     return request.get('/api/x/tag/archive/tags?bvid=' + bv)
 }
 
-export type reply = { ctime: number, rcount: number, like: number, member: { uname: string, avatar: string, is_senior_member: number, level_info: { current_level: number } }, content: { message: string }, replies: reply[] | null, reply_control: { sub_reply_entry_text: string } };
+export type reply = { ctime: number,rpid:number, rcount: number, like: number,mid:number,page:{num:number},folder:{is_folded:boolean}, member: { uname: string, avatar: string, level_info: { current_level: number } }, content: { message: string }, replies: reply[] , reply_control: { sub_reply_entry_text: string } };
 
 interface videoComments {
     data: {
-        replies: reply[]
+        replies: reply[],
+        top:{upper:{mid:number}}
     }
 }
 
@@ -121,4 +123,17 @@ interface videoComments {
 //視頻評論
 export const getVideoComments = (av: number): Promise<videoComments> => {
     return request.get('/api/x/v2/reply/main?type=1&oid=' + av)
+}
+
+interface rootReplies {
+    data: {
+        replies: reply[],
+    }
+}
+
+
+//視頻評論
+export const getRootReplies = (oid: number,root:number,page:number): Promise<rootReplies> => {
+    console.log('https://api.bilibili.com/x/v2/reply/reply?type=1&oid='+oid+'&root=' + root+'&ps=10'+'&pn='+page);
+    return request.get('/api/x/v2/reply/reply?type=1&oid='+oid+'&root=' + root+'&ps=10'+'&pn='+page)
 }
