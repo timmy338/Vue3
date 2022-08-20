@@ -22,7 +22,7 @@
       <li v-for="tab in leftTabs" class="jello-horizontal">
         <a>{{ tab }}</a>
       </li>
-      <li class="jello-horizontal">
+      <li class="jello-horizontal" style="margin-right: none">
         <font-awesome-icon class="icons" icon="fa-download" />
         <a>下载客户端</a>
       </li>
@@ -88,22 +88,26 @@
     <div class="thirdLeft">
       <div class="block text-center" m="t-4" style="position: relative">
         <!-- <span class="demonstration">Switch when indicator is clicked</span> -->
-        <el-carousel trigger="click" height="470px">
+        <el-carousel trigger="click" height="370px">
           <el-carousel-item v-for="item in thirdCarouselInfo" :key="item">
-            <img :src="item.url" style="width: 100%" />
-            <h3
-              text="2xl"
-              style="
-                position: absolute;
-                color: white;
-                bottom: -30px;
-                left: 20px;
-                font-size: 20px;
-                font-weight: bold;
-              "
-            >
-              {{ item.alt }}
-            </h3>
+            <div class="carouselInfo" :style="{ backgroundColor: item.rgb }">
+              <img :src="item.url" style="width: 100%" />
+              <div class="carouselTitle" :style="{ backgroundColor: item.rgb }"></div>
+              <h3
+                text="2xl"
+                style="
+                  position: absolute;
+                  z-index: 10;
+                  color: white;
+                  bottom: -10px;
+                  left: 20px;
+                  font-size: 18px;
+                  font-weight: bold;
+                "
+              >
+                {{ item.alt }}
+              </h3>
+            </div>
           </el-carousel-item>
         </el-carousel>
       </div>
@@ -119,11 +123,12 @@
 <script lang="ts" setup>
 import { reactive, toRefs, ref, onMounted } from "vue";
 import { getUserInfo, getHomePageRcmdVideo, rcmdVideo } from "../request/api";
+
 //搜索條
 import { Search } from "@element-plus/icons-vue";
 //視頻組件化
 import ColumnVideo from "../components/columnVideo.vue";
-
+import analyze from "rgbaster";
 const input1 = ref("");
 const data = reactive({
   leftTabs: ["番剧", "直播", "游戏中心", "会员购", "漫画", "赛事"],
@@ -159,8 +164,8 @@ const data = reactive({
     "公开课",
     "搞笑",
     "公益",
-    "资讯",
-    "动物圈",
+    /*     "资讯",
+    "动物圈", */
   ],
   secondTabsRight: [
     { name: "专栏", icon: "fa-solid fa-table-list" },
@@ -175,16 +180,19 @@ const data = reactive({
       url:
         "https://i0.hdslb.com/bfs/banner/dc8e3b12a4989ccd326afcfe6a1d0a04aa051f87.png@976w_550h_1c.webp",
       alt: "只要有我在，休要伤害邪龙大人！",
+      rgb: "",
     },
     {
       url:
         "https://i0.hdslb.com/bfs/banner/928d1b08bd755e98b68565f0f6a6398f3e218f27.png@976w_550h_1c.webp",
       alt: "曲云突然有了一个妙计",
+      rgb: "",
     },
     {
       url:
         "https://i0.hdslb.com/bfs/banner/5f78b6ea17111d623fb644458374240aa670520d.png@976w_550h_1c.webp",
       alt: "做胆小鬼没什么不好意思的",
+      rgb: "",
     },
   ],
   thirdVideo: [] as rcmdVideo[],
@@ -201,13 +209,24 @@ let {
   thirdCarouselInfo,
 } = toRefs(data);
 
+async function getRgb(url: string, i: number) {
+  const result = await analyze(url); // also supports base64 encoded image strings
+  data.thirdCarouselInfo[i].rgb = result[0].color;
+  console.log(result[0].color);
+  // => The  dominant color is rgb(0,0,255) with 2 occurrence(s)
+}
+
 onMounted(() => {
+  data.thirdCarouselInfo.forEach((v, i) => {
+    getRgb(v.url, i);
+  });
+
   getUserInfo().then((res) => {
     data.avatar = res.data.face;
   });
   getHomePageRcmdVideo().then((res) => {
     data.thirdVideo = res.data.item.slice(0, 6);
-/*     for (let i = 0; i < data.thirdVideo.length; i++) {
+    /*     for (let i = 0; i < data.thirdVideo.length; i++) {
       let myDate = new Date(Number(data.thirdVideo[i].pubdate) * 1000);
       data.thirdVideo[i].pubdate =
         "· " + Number(myDate.getMonth() + 1) + "-" + myDate.getDate();
@@ -218,25 +237,23 @@ onMounted(() => {
 });
 </script>
 <style lang="less" scoped>
-
-
 .topImg {
   position: relative;
   #img {
     position: absolute;
     z-index: -1;
     width: 100vw;
-    height: 230px;
+    height: 150px;
   }
   .logo-img {
     position: absolute;
-    left: 125px;
-    top: 120px;
+    left: 85px;
+    top: 60px;
   }
 }
 
 .headDiv {
-  width: auto;
+  width: 1519.2px;
   padding: 0 20px;
   height: 155px;
   display: flex;
@@ -245,12 +262,11 @@ onMounted(() => {
   .headLeft {
     padding: 10px 0;
     padding-top: 20px;
-    width: 30%;
     display: flex;
     flex-direction: row;
-
     li {
       height: 15px;
+      margin-right: 15px;
     }
     .icons {
       padding-right: 5px;
@@ -261,7 +277,6 @@ onMounted(() => {
       font-size: 16px;
       color: aliceblue;
       font-weight: bold;
-      margin-left: 15px;
       /* text-shadow: rgb(10, 10, 10) 0.3em 0.3em 0.4em; */
       text-shadow: 1px 1px 0px black, 3px 3px 0px black;
       cursor: pointer;
@@ -269,9 +284,8 @@ onMounted(() => {
   }
 
   .search {
-    margin-left: 10px;
     margin-top: 10px;
-    width: 25%;
+    width: 390px;
     height: 40px;
     .el-input__wrapper,
     .el-input,
@@ -283,7 +297,7 @@ onMounted(() => {
 
   .headRight {
     padding-top: 10px;
-    width: 24%;
+    width: 570px;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -324,16 +338,16 @@ onMounted(() => {
 }
 
 .secondDiv {
-  margin-top: 80px;
   display: flex;
   padding: 20px 100px;
+  padding-bottom: 0px;
   height: 90px;
   .secondLeft {
+    width: 200px;
     display: flex;
     justify-content: space-between;
     padding: 0 20px;
-    width: 230px;
-    margin-right: 30px;
+    font-size: 14px;
     li {
       display: flex;
       flex-direction: column;
@@ -341,14 +355,14 @@ onMounted(() => {
     }
     img {
       border-radius: 5em;
-      width: 50px;
+      width: 40px;
       margin-bottom: 5px;
     }
   }
 
   .secondMiddle {
     margin-top: 5px;
-    width: 1390px;
+    width: 1000px;
     height: 70px;
     display: flex;
     justify-content: space-around;
@@ -360,10 +374,10 @@ onMounted(() => {
     }
     li {
       margin-left: 10px;
-      width: 78px;
+      width: 40px;
       text-align: center;
       padding: 8px 12px;
-      font-size: 18px;
+      font-size: 14px;
       background-color: #f6f7f8;
       color: #616d83;
       border-radius: 0.3em;
@@ -374,19 +388,17 @@ onMounted(() => {
 
   .secondRight {
     margin-top: 10px;
-    margin-left: 60px;
-    font-size: 16px;
-    width: 18%;
+    font-size: 14px;
+    width: 300px;
     display: flex;
     flex-wrap: wrap;
     color: #61666d;
     .secondRightIcons {
-      margin-left: 30px;
-      font-size: 18px;
+      margin-left: 20px;
+      font-size: 16px;
       margin-right: 10px;
     }
     li {
-      width: 100px;
       cursor: pointer;
     }
   }
@@ -394,11 +406,11 @@ onMounted(() => {
 
 .thirdDiv {
   display: flex;
-  padding: 20px 110px;
+  padding: 10px 100px;
   justify-content: space-between;
 
   .thirdLeft {
-    width: 42%;
+    width: 38%;
 
     .block {
       border-radius: 0.5em;
@@ -407,25 +419,39 @@ onMounted(() => {
     .demonstration {
       color: var(--el-text-color-secondary);
     }
+    .el-carousel__item .carouselInfo {
+      width: 100%;
+      height: 400px;
+    }
+    .carouselInfo img {
+      z-index: 5;
+      position: absolute;
+    }
+    .el-carousel__item .carouselInfo .carouselTitle {
+      position: absolute;
+      bottom: 0;
+      z-index: 6;
+      width: 130%;
+      height: 35%;
+      background: linear-gradient(
+        to top,
+        rgba(255, 255, 255, 0.2) 1%,
+        rgba(255, 255, 255, 0.2) 40%
+      );
+      filter: blur(20px);
+    }
     .el-carousel__item h3 {
       color: #feffff;
       line-height: 150px;
       margin: 0;
+
       text-align: center;
-    }
-
-    .el-carousel__item:nth-child(2n) {
-      background-color: #99a9bf;
-    }
-
-    .el-carousel__item:nth-child(2n + 1) {
-      background-color: #d3dce6;
     }
   }
 
   .thirdRight {
-    width: 56%;
-    height: 520px;
+    width: 800px;
+    height: 490px;
     display: flex;
     justify-content: space-between;
     align-content: space-between;

@@ -47,7 +47,7 @@ function gotoVideoPage() {
 .rcmdVideoImgDiv {
   position: relative;
   width: 100%;
-  height: 70%;
+  height: 80%;
   margin-bottom: 10px;
   .rcmdVideoImg {
     width: 100%;
@@ -56,9 +56,10 @@ function gotoVideoPage() {
   }
   .videoInfo {
     /* mix-blend-mode: difference; */
+    font-size: 12px;
     position: absolute;
-    bottom: 8px;
-    width: 95%;
+    bottom: 2px;
+    width: 90%;
     padding: 5px 10px;
     display: flex;
     justify-content: space-between;
@@ -74,15 +75,15 @@ function gotoVideoPage() {
 
 .rcmdVideoTitle {
   width: 100%;
-  height: 50px;
-  font-size: 15px;
+  height: 43px;
+  font-size: 13px;
   white-space: pre-wrap;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
-  line-height: 25px;
+  line-height: 20px;
   font-weight: bold;
   cursor: pointer;
 }
@@ -93,7 +94,7 @@ function gotoVideoPage() {
   font-weight: 550;
   height: 24px;
   line-height: 24px;
-  font-size: 14px;
+  font-size: 13px;
   cursor: pointer;
 }
 </style>
