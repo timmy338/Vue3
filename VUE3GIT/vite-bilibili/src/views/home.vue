@@ -225,14 +225,8 @@ onMounted(() => {
     data.avatar = res.data.face;
   });
   getHomePageRcmdVideo().then((res) => {
-    data.thirdVideo = res.data.item.slice(0, 6);
-    /*     for (let i = 0; i < data.thirdVideo.length; i++) {
-      let myDate = new Date(Number(data.thirdVideo[i].pubdate) * 1000);
-      data.thirdVideo[i].pubdate =
-        "· " + Number(myDate.getMonth() + 1) + "-" + myDate.getDate();
-    } */
-
-    console.log(res.data.item[0]);
+    data.thirdVideo = res.data.archives;
+  /*   console.log(res.data.item[0]); */
   });
 });
 </script>
@@ -429,10 +423,10 @@ onMounted(() => {
     }
     .el-carousel__item .carouselInfo .carouselTitle {
       position: absolute;
-      bottom: 0;
+      bottom: -10px;
       z-index: 6;
       width: 130%;
-      height: 35%;
+      height: 40%;
       background: linear-gradient(
         to top,
         rgba(255, 255, 255, 0.2) 1%,

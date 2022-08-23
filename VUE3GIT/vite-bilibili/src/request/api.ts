@@ -46,7 +46,7 @@ export const getUserInfo = (): Promise<userInfo> => {
 }
 
 export type rcmdVideo = {
-    bvid: string,
+    aid: string,
     pic: string,
     duration: number,
     title: string,
@@ -64,14 +64,13 @@ export type rcmdVideo = {
 
 interface recommendVideo extends apiBasic {
     data: {
-        item: rcmdVideo[];
+        archives: rcmdVideo[];
     };
 }
 //首頁推薦視頻
 export const getHomePageRcmdVideo = (): Promise<recommendVideo> => {
-    return request.get('/api/x/web-interface/index/top/rcmd?version=1&ps=3');
+    return request.get('/api/x/web-interface/dynamic/region?ps=6&rid=1');
 }
-
 export interface videoPageInfo {
     data: {
         aid:number,
