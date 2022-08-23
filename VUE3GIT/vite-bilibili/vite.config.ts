@@ -29,8 +29,8 @@ export default defineConfig({
         target: "http://api.bilibili.com",
         changeOrigin: true,
         rewrite: (path) => path.replace("/api", ""),
-        headers:{
-          referrer:'https://bilibili.com',
+        headers: {
+          Referrer: 'http://bilibili.com',
         }
       },
 

@@ -38,7 +38,7 @@ function gotoVideoPage() {
   router.push({
     path: "/video",
     query: {
-      bv: props.videoData.bvid,
+      av: props.videoData.aid,
     },
   });
 }
@@ -48,17 +48,16 @@ function gotoVideoPage() {
   position: relative;
   width: 100%;
   height: 80%;
-  margin-bottom: 10px;
   .rcmdVideoImg {
     width: 100%;
-    height: 100%;
+    height: 167px;
     border-radius: 0.5em;
   }
   .videoInfo {
     /* mix-blend-mode: difference; */
     font-size: 12px;
     position: absolute;
-    bottom: 2px;
+    bottom: 6px;
     width: 90%;
     padding: 5px 10px;
     display: flex;

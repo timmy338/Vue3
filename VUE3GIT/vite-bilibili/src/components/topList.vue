@@ -96,7 +96,7 @@ onMounted(() => {
       box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
       .headLeft {
         padding: 10px 0;
-        width: 30%;
+        width: 37%;
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -110,14 +110,13 @@ onMounted(() => {
         }
         li,
         .icons {
-          font-size: 16px;
-          margin-left: 15px;
+          font-size: 14px;
+          margin-left: 10px;
           cursor: pointer;
         }
       }
 
       .search {
-        margin-left: 10px;
         width: 25%;
         height: 40px;
         .el-input__wrapper,
@@ -129,7 +128,7 @@ onMounted(() => {
       }
 
       .headRight {
-        width: 24%;
+        width: 30%;
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -144,23 +143,23 @@ onMounted(() => {
         .rightTabs {
           display: flex;
           flex-direction: column;
-          margin-left: 30px;
+          margin-left: 20px;
           /* text-shadow: rgb(10, 10, 10) 0.3em 0.3em 0.4em; */
           cursor: pointer;
         }
         .rightIcons {
-          font-size: 22px;
+          font-size: 18px;
           margin-bottom: 5px;
         }
         .upLoad {
           margin-left: 20px;
-          width: 110px;
+          width: 100px;
           height: 40px;
           line-height: 40px;
           background-color: #fb7299;
           border-radius: 0.5em;
           text-align: center;
-          font-size: 15px;
+          font-size: 13px;
           text-shadow: none;
           cursor: pointer;
         }

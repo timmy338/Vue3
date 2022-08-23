@@ -212,7 +212,7 @@ let {
 async function getRgb(url: string, i: number) {
   const result = await analyze(url); // also supports base64 encoded image strings
   data.thirdCarouselInfo[i].rgb = result[0].color;
-  console.log(result[0].color);
+ /*  console.log(result[0].color); */
   // => The  dominant color is rgb(0,0,255) with 2 occurrence(s)
 }
 
@@ -226,7 +226,7 @@ onMounted(() => {
   });
   getHomePageRcmdVideo().then((res) => {
     data.thirdVideo = res.data.archives;
-  /*   console.log(res.data.item[0]); */
+    console.log(res.data.archives[0]);
   });
 });
 </script>

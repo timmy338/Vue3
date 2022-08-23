@@ -83,10 +83,11 @@ export interface videoPageInfo {
             favorite: number,
             like: number,
             coin: number,
-            share: number
+            share: number,
+            reply:number
         }
         honor_reply: {
-            honor: {
+            honor?: {
                 desc: string
             }[]
         }
@@ -95,8 +96,8 @@ export interface videoPageInfo {
 
 
 //視頻api
-export const getVideo = (bv: string): Promise<videoPageInfo> => {
-    return request.get('/api/x/web-interface/view?bvid=' + bv);
+export const getVideo = (av: number): Promise<videoPageInfo> => {
+    return request.get('/api/x/web-interface/view?aid=' + av);
 }
 
 export type videoTag = { tag_name: string, type: number }
@@ -105,33 +106,37 @@ interface videoTags {
 }
 
 //視頻tag
-export const getVideoTags = (bv: string): Promise<videoTags> => {
-    return request.get('/api/x/tag/archive/tags?bvid=' + bv)
+export const getVideoTags = (av: number): Promise<videoTags> => {
+    return request.get('/api/x/tag/archive/tags?aid=' + av)
 }
 
-export type reply = { ctime: number,rpid:number, rcount: number, like: number,mid:number,page:{num:number},folder:{is_folded:boolean}, member: { uname: string, avatar: string, level_info: { current_level: number } }, content: { message: string }, replies: reply[] , reply_control: { sub_reply_entry_text: string } };
+export type replyType = { ctime: number,rpid:number, rcount: number, like: number,mid:number,page:{num:number},folder:{is_folded:boolean}, member: { uname: string, avatar: string, level_info: { current_level: number } }, content: { message: string }, replies: replyType[] , reply_control: { sub_reply_entry_text: string } };
 
 interface videoComments {
     data: {
-        replies: reply[],
-        top:{upper:{mid:number}}
+        replies: replyType[],
+        top:{upper:{mid:number}|null}
     }
 }
 
 
-//視頻評論
-export const getVideoComments = (av: number): Promise<videoComments> => {
+//視頻評論(熱度)
+export const getVideoCommentsByHot = (av: number): Promise<videoComments> => {
     return request.get('/api/x/v2/reply/main?type=1&oid=' + av)
+}
+//視頻評論(時間)
+export const getVideoCommentsByTime = (av: number): Promise<videoComments> => {
+    return request.get('/api/x/v2/reply/main?type=1&mode=2&oid=' + av)
 }
 
 interface rootReplies {
     data: {
-        replies: reply[],
+        replies: replyType[],
     }
 }
 
 
-//視頻評論
+//視頻評論回覆
 export const getRootReplies = (oid: number,root:number,page:number): Promise<rootReplies> => {
     console.log('https://api.bilibili.com/x/v2/reply/reply?type=1&oid='+oid+'&root=' + root+'&ps=10'+'&pn='+page);
     return request.get('/api/x/v2/reply/reply?type=1&oid='+oid+'&root=' + root+'&ps=10'+'&pn='+page)

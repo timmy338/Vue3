@@ -1,6 +1,7 @@
 <!--  -->
 <template>
   <TopList></TopList>
+
   <div class="videoView" v-if="videoInfo.stat != undefined">
     <div class="leftVideoView">
       <text style="font-size: 18px; font-weight: 600">{{ videoInfo.title }}</text>
@@ -8,11 +9,11 @@
         <text>{{ millionsHandle(videoInfo.stat.view) }}播放</text>
         <text>总弹幕数{{ millionsHandle(videoInfo.stat.danmaku) }}</text>
         <text>{{ yearToSecondHandle(videoInfo.pubdate) }}</text>
-        <text v-if="videoInfo.honor_reply.honor[0].desc != undefined">{{
-          videoInfo.honor_reply.honor[0].desc
+        <text>{{
+          videoInfo.honor_reply.honor ? videoInfo.honor_reply.honor[0].desc : ""
         }}</text>
       </div>
-      <PlayVideo :videoSrc="videoSrc"></PlayVideo>
+      <!--    <PlayVideo :videoSrc="videoSrc"></PlayVideo> -->
       <div class="videoBottom">
         <ul class="videoBasicInfo">
           <li class="textBlueHover">
@@ -52,11 +53,43 @@
         <div class="text">
           {{ videoInfo.desc }}
         </div>
-        <label class="btn" for="exp1"></label>
+        <label class="btn" for="exp1" v-if="videoInfo.desc.length < 30"></label>
       </div>
       <div class="tags">
         <div v-for="tab in videoTags">
           <VidoeTags :tagData="tab" />
+        </div>
+      </div>
+      <div style="margin-top: 30px">
+        <text style="font-size: 18px; font-weight: 400"
+          >{{ videoInfo.stat.reply }} 评论</text
+        >
+        <el-tabs v-model="activeName" class="demo-tabs" @tab-change="commentTabClick">
+          <el-tab-pane label="按熱度排序" name="hot"></el-tab-pane>
+          <el-tab-pane label="按時間排序" name="time"></el-tab-pane>
+        </el-tabs>
+        <div
+          style="
+            width: 100%;
+            height: 80px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          <img
+            class="avatar"
+            :src="data.avatar"
+            style="border-radius: 2em; width: 50px; height: 50px;margin-top: -18px;"
+          />
+          <el-input
+            v-model="textarea"
+            :rows="3"
+            type="textarea"
+            placeholder="Please input"
+            style="width: 80%;"
+          />
+          <el-button type="primary" style="height: 73px">發表評論</el-button>
         </div>
       </div>
 
@@ -65,9 +98,8 @@
         v-if="videoComments"
         v-for="(commentRoot, index) of videoComments"
       >
-        <div>
-          <img class="ownerAvatar" :src="commentRoot.member.avatar" />
-        </div>
+        <img class="ownerAvatar" :src="commentRoot.member.avatar" />
+
         <div class="divRight">
           <div class="ownerName">
             <span style="color: #fb7299">
@@ -102,7 +134,7 @@
           </div>
           <div
             class="more"
-            v-if="commentRoot.rcount > 1 && (!commentRoot.folder.is_folded)"
+            v-if="commentRoot.rcount > 1 && !commentRoot.folder.is_folded"
           >
             {{ commentRoot.reply_control.sub_reply_entry_text }},<text
               style="color: #00a1d6"
@@ -114,7 +146,7 @@
           </div>
           <div
             class="morePages"
-            style="margin-top: 10px;"
+            style="margin-top: 10px"
             v-if="commentRoot.rcount > 10 && commentRoot.folder.is_folded"
           >
             <div class="pagination-block">
@@ -134,32 +166,47 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, toRefs, ref } from "vue";
+import { reactive, toRefs, ref, onMounted } from "vue";
 import {
+  getUserInfo,
   getVideo,
   videoPageInfo,
   getVideoTags,
   videoTag,
-  getVideoComments,
-  reply,
+  getVideoCommentsByHot,
+  getVideoCommentsByTime,
+  replyType,
   getRootReplies,
 } from "../request/api";
 import { useRoute } from "vue-router";
 //數字格式規範化
-import { millionsHandle, yearToSecondHandle } from "../ts/global";
+import { millionsHandle, yearToSecondHandle, checkNull } from "../ts/global";
 //組件導入
 import PlayVideo from "../components/playVideo.vue";
 import TopList from "../components/topList.vue";
 import VidoeTags from "../components/videoTags.vue";
 import CommentRely from "../components/commentRely.vue";
+import type { TabPanelName } from "element-plus";
 
+//elementPlus 組件
+const activeName = ref("hot");
+const textarea = ref("");
+
+const commentTabClick = (tab: TabPanelName) => {
+  console.log(tab);
+  if (tab == "hot") {
+    getCommentsByHot(data.av);
+  } else {
+    getCommentsByTime(data.av);
+  }
+};
 const data = reactive({
-  bv: "BV1US4y1s7aG",
-  av: 729445909,
+  avatar: "",
+  av: 599745995,
   videoInfo: {} as videoPageInfo["data"],
   videoSrc: "",
   videoTags: [] as videoTag[],
-  videoComments: [] as reply[],
+  videoComments: [] as replyType[],
   videoUP: 0,
 });
 
@@ -168,34 +215,6 @@ const data = reactive({
 data.bv=""+Route.query.bv; */
 
 let { videoInfo, videoSrc, videoTags, videoComments, videoUP } = toRefs(data);
-
-//請求視頻API
-getVideo(data.bv)
-  .then((res) => {
-    data.videoInfo = res.data;
-    console.log(res);
-  })
-  .catch(() => {
-    alert("獲取視頻失敗");
-  });
-
-getVideoTags(data.bv)
-  .then((res) => {
-    data.videoTags = res.data;
-    /* console.log(res); */
-  })
-  .catch(() => {
-    alert("獲取視頻TAGS失敗");
-  });
-getVideoComments(data.av)
-  .then((res) => {
-    data.videoComments = res.data.replies;
-    data.videoUP = res.data.top.upper.mid;
-    console.log("獲取成功");
-  })
-  .catch(() => {
-    alert("獲取視頻Comments失敗");
-  });
 
 //請求某個留言詳情(第一次展開)
 function changeRootReplies(oid: number, root: number, index: number) {
@@ -210,9 +229,15 @@ function changeRootReplies(oid: number, root: number, index: number) {
     });
 }
 //請求某個留言詳情(展開後換頁)
-function handleCurrentChange(oid: number, root: number,index: number,test:boolean,page:number) {
+function handleCurrentChange(
+  oid: number,
+  root: number,
+  index: number,
+  test: boolean,
+  page: number
+) {
   console.log(test);
-    getRootReplies(oid, root, page)
+  getRootReplies(oid, root, page)
     .then((res) => {
       data.videoComments[index].replies = res.data.replies;
       console.log("獲取某個留言詳情");
@@ -221,12 +246,61 @@ function handleCurrentChange(oid: number, root: number,index: number,test:boolea
       alert("獲取某個留言詳情失敗");
     });
 }
+//請求視頻Comments
+function getCommentsByHot(av: number) {
+  getVideoCommentsByHot(av)
+    .then((res) => {
+      data.videoComments = res.data.replies;
+      data.videoUP = res.data.top.upper != null ? res.data.top.upper.mid : 0;
+      console.log("獲取成功");
+    })
+    .catch(() => {
+      alert("獲取視頻Comments失敗");
+    });
+}
+function getCommentsByTime(av: number) {
+  getVideoCommentsByTime(av)
+    .then((res) => {
+      data.videoComments = res.data.replies;
+      data.videoUP = res.data.top.upper != null ? res.data.top.upper.mid : 0;
+      console.log("獲取成功");
+    })
+    .catch(() => {
+      alert("獲取視頻Comments失敗");
+    });
+}
+
+onMounted(() => {
+  //獲取用戶頭像
+  getUserInfo().then((res) => {
+    data.avatar = res.data.face;
+  });
+  //請求視頻Info
+  getVideo(data.av)
+    .then((res) => {
+      data.videoInfo = res.data;
+      console.log("videoInfoApi", data.videoInfo);
+    })
+    .catch(() => {
+      alert("獲取視頻失敗");
+    });
+  //請求視頻TAG
+  getVideoTags(data.av)
+    .then((res) => {
+      data.videoTags = res.data;
+    })
+    .catch(() => {
+      alert("獲取視頻TAGS失敗");
+    });
+  //請求視頻Comments
+  getCommentsByHot(data.av);
+});
 </script>
 <style lang="less" scoped>
 .videoView {
-  width: 100%;
+  width: 1519.2px;
   margin-top: 20px;
-  padding: 0 453px;
+  padding: 0 168px;
   display: flex;
   background-color: rgb(255, 187, 187);
   .leftVideoView {
@@ -307,10 +381,15 @@ function handleCurrentChange(oid: number, root: number,index: number,test:boolea
     .tags {
       display: flex;
       flex-wrap: wrap;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(143, 143, 143, 0.228);
       div {
         margin-right: 10px;
         margin-bottom: 5px;
       }
+    }
+    .demo-tabs {
+      margin-top: 30px;
     }
     .comments {
       display: flex;
@@ -347,7 +426,7 @@ function handleCurrentChange(oid: number, root: number,index: number,test:boolea
         }
         .content {
           font-size: 15px;
-          margin-top: 10px;
+          margin-top: 2px;
           margin-bottom: 10px;
           line-height: 20px;
           white-space: pre-line;

@@ -21,3 +21,10 @@ export function yearToSecondHandle(num: number) {
     let myDate = new Date(num*1000);
     return (myDate.getFullYear()) + "-" + (myDate.getMonth() + 1) + "-" + myDate.getDate()+" "+myDate.toTimeString().substring(0,8);
 }
+
+export function checkNull(myObject:object){
+    if(myObject==undefined){
+        return "";
+    }
+    else return myObject;
+}
