@@ -1,5 +1,11 @@
 import request from './request'
 
+interface basic {
+    code: number;
+    message: string;
+    ttl: number;
+}
+
 interface apiBasic {
     code: number;
     status: boolean;
@@ -85,7 +91,12 @@ export interface videoPageInfo {
             coin: number,
             share: number,
             reply:number
-        }
+        },
+        owner:{
+            face:string,
+            mid:number,
+            name:string
+        },
         honor_reply: {
             honor?: {
                 desc: string
@@ -135,9 +146,34 @@ interface rootReplies {
     }
 }
 
-
 //視頻評論回覆
 export const getRootReplies = (oid: number,root:number,page:number): Promise<rootReplies> => {
-    console.log('https://api.bilibili.com/x/v2/reply/reply?type=1&oid='+oid+'&root=' + root+'&ps=10'+'&pn='+page);
     return request.get('/api/x/v2/reply/reply?type=1&oid='+oid+'&root=' + root+'&ps=10'+'&pn='+page)
+}
+
+interface ownerDetailInfo extends basic{
+    data:{
+        sign:string
+    }
+}
+
+//視頻作者個人信息
+export const getOwnerDetail = (mid: number): Promise<ownerDetailInfo> => {
+    return request.get('/api/x/space/acc/info?mid='+mid)
+}
+interface ownerFans extends basic{
+    data:{
+        follower:number
+    }
+}
+//視頻作者的粉絲數量
+export const getFans = (mid: number): Promise<ownerFans> => {
+    return request.get('/api/x/relation/stat?vmid='+mid)
+}
+interface videoRcmdList extends basic{
+    data:rcmdVideo[]
+}
+//获取单视频推荐列表
+export const getVideoRcmdList = (av: number): Promise<videoRcmdList> => {
+    return request.get('/api/x/web-interface/archive/related?aid='+av)
 }

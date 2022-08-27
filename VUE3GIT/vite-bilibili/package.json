@@ -27,6 +27,7 @@
     "rgbaster": "^2.1.1",
     "vue": "^3.2.37",
     "vue-router": "^4.0.13",
+    "vue3-infinite-list": "^0.2.5",
     "vuex": "^4.0.2"
   },
   "devDependencies": {

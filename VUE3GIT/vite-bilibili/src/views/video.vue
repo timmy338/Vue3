@@ -60,7 +60,7 @@
           <VidoeTags :tagData="tab" />
         </div>
       </div>
-      <div style="margin-top: 30px">
+      <div style="margin-top: 30px" class="commentHeader">
         <text style="font-size: 18px; font-weight: 400"
           >{{ videoInfo.stat.reply }} 评论</text
         >
@@ -68,26 +68,14 @@
           <el-tab-pane label="按熱度排序" name="hot"></el-tab-pane>
           <el-tab-pane label="按時間排序" name="time"></el-tab-pane>
         </el-tabs>
-        <div
-          style="
-            width: 100%;
-            height: 80px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-          "
-        >
-          <img
-            class="avatar"
-            :src="data.avatar"
-            style="border-radius: 2em; width: 50px; height: 50px;margin-top: -18px;"
-          />
+        <div class="submitComment">
+          <img class="avatar" :src="data.avatar" />
           <el-input
             v-model="textarea"
             :rows="3"
             type="textarea"
             placeholder="Please input"
-            style="width: 80%;"
+            style="width: 80%"
           />
           <el-button type="primary" style="height: 73px">發表評論</el-button>
         </div>
@@ -154,14 +142,44 @@
                 small
                 layout="prev, pager, next"
                 :total="commentRoot.rcount"
-                @current-change="(val:number) => handleCurrentChange(videoInfo.aid, commentRoot.rpid,index,commentRoot.folder.is_folded,val)"
+                @current-change="(val:number) => handleCurrentChange(videoInfo.aid, commentRoot.rpid,index,val)"
               />
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="rightVideoView"></div>
+    <div class="rightVideoView">
+      <div class="ownerC">
+        <img :src="videoInfo.owner.face" />
+        <div class="ownerDesc">
+          <div>
+            <text class="textBlueHover" style="font-size: 18px"
+              >{{ videoInfo.owner.name }}
+            </text>
+            <a class="textBlueHover" style="color: #999999; margin-left: 10px">
+              <font-awesome-icon icon="fa-solid fa-envelope" /><text
+                style="margin-left: 5px"
+                >發信息</text
+              ></a
+            >
+          </div>
+          <div class="sign">{{ owner.ownerDesc }}</div>
+
+          <div class="ownerBtn">
+            <el-button plain class="donate">為TA充電</el-button>
+            <el-button plain class="subscribe">+關注{{ owner.fans }}</el-button>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <text style="font-size: 20px">相關視頻</text>
+        <div v-for="tab in rcmdList" style="margin-top: 10px;">
+          <RowVideo :videoData="tab"/>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -177,6 +195,10 @@ import {
   getVideoCommentsByTime,
   replyType,
   getRootReplies,
+  getOwnerDetail,
+  getFans,
+  rcmdVideo,
+  getVideoRcmdList,
 } from "../request/api";
 import { useRoute } from "vue-router";
 //數字格式規範化
@@ -187,13 +209,14 @@ import TopList from "../components/topList.vue";
 import VidoeTags from "../components/videoTags.vue";
 import CommentRely from "../components/commentRely.vue";
 import type { TabPanelName } from "element-plus";
+import RowVideo from "../components/rowVideo.vue";
 
 //elementPlus 組件
 const activeName = ref("hot");
 const textarea = ref("");
 
 const commentTabClick = (tab: TabPanelName) => {
-  console.log(tab);
+  /* console.log(tab); */
   if (tab == "hot") {
     getCommentsByHot(data.av);
   } else {
@@ -208,13 +231,18 @@ const data = reactive({
   videoTags: [] as videoTag[],
   videoComments: [] as replyType[],
   videoUP: 0,
+  owner: {
+    ownerDesc: "",
+    fans: 0,
+  },
+  rcmdList: [] as rcmdVideo[],
 });
 
 //從別頁傳入bv號
 /* const Route=useRoute();
 data.bv=""+Route.query.bv; */
 
-let { videoInfo, videoSrc, videoTags, videoComments, videoUP } = toRefs(data);
+let { videoInfo, videoSrc, videoTags, videoComments, videoUP, owner ,rcmdList} = toRefs(data);
 
 //請求某個留言詳情(第一次展開)
 function changeRootReplies(oid: number, root: number, index: number) {
@@ -229,18 +257,10 @@ function changeRootReplies(oid: number, root: number, index: number) {
     });
 }
 //請求某個留言詳情(展開後換頁)
-function handleCurrentChange(
-  oid: number,
-  root: number,
-  index: number,
-  test: boolean,
-  page: number
-) {
-  console.log(test);
+function handleCurrentChange(oid: number, root: number, index: number, page: number) {
   getRootReplies(oid, root, page)
     .then((res) => {
       data.videoComments[index].replies = res.data.replies;
-      console.log("獲取某個留言詳情");
     })
     .catch(() => {
       alert("獲取某個留言詳情失敗");
@@ -251,8 +271,7 @@ function getCommentsByHot(av: number) {
   getVideoCommentsByHot(av)
     .then((res) => {
       data.videoComments = res.data.replies;
-      data.videoUP = res.data.top.upper != null ? res.data.top.upper.mid : 0;
-      console.log("獲取成功");
+      console.log("獲取留言成功");
     })
     .catch(() => {
       alert("獲取視頻Comments失敗");
@@ -262,7 +281,6 @@ function getCommentsByTime(av: number) {
   getVideoCommentsByTime(av)
     .then((res) => {
       data.videoComments = res.data.replies;
-      data.videoUP = res.data.top.upper != null ? res.data.top.upper.mid : 0;
       console.log("獲取成功");
     })
     .catch(() => {
@@ -279,6 +297,21 @@ onMounted(() => {
   getVideo(data.av)
     .then((res) => {
       data.videoInfo = res.data;
+      data.videoUP = res.data.owner.mid;
+      getOwnerDetail(data.videoUP)
+        .then((res) => {
+          data.owner.ownerDesc = res.data.sign;
+        })
+        .catch(() => {
+          alert("獲取作者信息失敗");
+        });
+      getFans(data.videoUP)
+        .then((res) => {
+          data.owner.fans = res.data.follower;
+        })
+        .catch(() => {
+          alert("作者關注數獲取失敗");
+        });
       console.log("videoInfoApi", data.videoInfo);
     })
     .catch(() => {
@@ -294,17 +327,27 @@ onMounted(() => {
     });
   //請求視頻Comments
   getCommentsByHot(data.av);
+  //獲取推薦視頻
+  getVideoRcmdList(data.av)
+    .then((res) => {
+      data.rcmdList=res.data;
+      console.log("推薦視頻",data.rcmdList)
+    })
+    .catch(() => {
+      alert("獲取推薦視頻失敗");
+    });
 });
 </script>
 <style lang="less" scoped>
 .videoView {
-  width: 1519.2px;
   margin-top: 20px;
-  padding: 0 168px;
+  padding: 0 140px;
+  padding-bottom: 20px;
   display: flex;
+  justify-content:  space-between;
   background-color: rgb(255, 187, 187);
   .leftVideoView {
-    width: 885px;
+    width: 865px;
     background-color: white;
     .detail {
       padding-top: 5px;
@@ -388,9 +431,25 @@ onMounted(() => {
         margin-bottom: 5px;
       }
     }
-    .demo-tabs {
-      margin-top: 30px;
+    .commentHeader {
+      .demo-tabs {
+        margin-top: 30px;
+      }
+      .submitComment {
+        width: 100%;
+        height: 80px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        img {
+          border-radius: 2em;
+          width: 50px;
+          height: 50px;
+          margin-top: -18px;
+        }
+      }
     }
+
     .comments {
       display: flex;
       margin-top: 30px;
@@ -462,10 +521,50 @@ onMounted(() => {
     }
   }
   .rightVideoView {
-    margin-left: 20px;
-    width: 320px;
-    height: 300px;
+    width: 350px;
     background-color: antiquewhite;
+    .ownerC {
+      width: 100%;
+      margin-bottom: 20px;
+      display: flex;
+      img {
+        width: 50px;
+        height: 50px;
+        border-radius: 2em;
+        margin-right: 10px;
+      }
+      .ownerDesc {
+        width: 80%;
+        .sign {
+          width: 100%;
+          margin-top: 5px;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          color: #999999;
+        }
+      }
+      .ownerBtn {
+        margin-top: 5px;
+        .donate {
+          width: 40%;
+          background-color: #ffffff;
+          border: 1px solid #fb7299;
+          color: #fb7299;
+        }
+        .donate:hover {
+          background-color: #fb7299;
+          color: white;
+        }
+        .subscribe {
+          width: 50%;
+          background-color: #00a1d6;
+          color: white;
+        }
+        .subscribe:hover {
+          background-color: #00b5e5;
+        }
+      }
+    }
   }
 }
 </style>

@@ -9,6 +9,7 @@ declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     ColumnVideo: typeof import('./src/components/columnVideo.vue')['default']
     CommentRely: typeof import('./src/components/commentRely.vue')['default']
+    copy: typeof import('./src/components/columnVideo copy.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCarousel: typeof import('element-plus/es')['ElCarousel']
     ElCarouselItem: typeof import('element-plus/es')['ElCarouselItem']
@@ -22,6 +23,7 @@ declare module '@vue/runtime-core' {
     PlayVideo: typeof import('./src/components/playVideo.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    RowVideo: typeof import('./src/components/rowVideo.vue')['default']
     TopButton: typeof import('./src/components/topButton.vue')['default']
     TopList: typeof import('./src/components/topList.vue')['default']
     VideoTags: typeof import('./src/components/videoTags.vue')['default']
