@@ -10,3 +10,4 @@ declare module "rgbaster"{
     }[]>;
     export {};
 }
+declare module "vue3-infinite-list"

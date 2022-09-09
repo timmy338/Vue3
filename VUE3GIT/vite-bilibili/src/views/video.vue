@@ -80,7 +80,17 @@
           <el-button type="primary" style="height: 73px">發表評論</el-button>
         </div>
       </div>
-
+      <InfiniteList
+        v-if="data.videoComments.length!=0"
+        :data="data.videoComments"
+        :width="'100%'"
+        :height="'100%'"
+        :itemSize="20"
+        :debug="debug"
+        v-slot="{ item, index }"
+      >
+        <div class="li-con">{{ index + 1 }} : {{ item }}</div>
+      </InfiniteList>
       <div
         class="comments"
         v-if="videoComments"
@@ -175,8 +185,8 @@
 
       <div>
         <text style="font-size: 20px">相關視頻</text>
-        <div v-for="tab in rcmdList" style="margin-top: 10px;">
-          <RowVideo :videoData="tab"/>
+        <div v-for="tab in rcmdList" style="margin-top: 10px">
+          <RowVideo :videoData="tab" />
         </div>
       </div>
     </div>
@@ -191,8 +201,7 @@ import {
   videoPageInfo,
   getVideoTags,
   videoTag,
-  getVideoCommentsByHot,
-  getVideoCommentsByTime,
+  getVideoComments,
   replyType,
   getRootReplies,
   getOwnerDetail,
@@ -210,7 +219,7 @@ import VidoeTags from "../components/videoTags.vue";
 import CommentRely from "../components/commentRely.vue";
 import type { TabPanelName } from "element-plus";
 import RowVideo from "../components/rowVideo.vue";
-
+import InfiniteList from "vue3-infinite-list";
 //elementPlus 組件
 const activeName = ref("hot");
 const textarea = ref("");
@@ -218,9 +227,9 @@ const textarea = ref("");
 const commentTabClick = (tab: TabPanelName) => {
   /* console.log(tab); */
   if (tab == "hot") {
-    getCommentsByHot(data.av);
+    getComments(data.av,0);
   } else {
-    getCommentsByTime(data.av);
+    getComments(data.av,2);
   }
 };
 const data = reactive({
@@ -242,7 +251,9 @@ const data = reactive({
 /* const Route=useRoute();
 data.bv=""+Route.query.bv; */
 
-let { videoInfo, videoSrc, videoTags, videoComments, videoUP, owner ,rcmdList} = toRefs(data);
+let { videoInfo, videoSrc, videoTags, videoComments, videoUP, owner, rcmdList } = toRefs(
+  data
+);
 
 //請求某個留言詳情(第一次展開)
 function changeRootReplies(oid: number, root: number, index: number) {
@@ -267,26 +278,17 @@ function handleCurrentChange(oid: number, root: number, index: number, page: num
     });
 }
 //請求視頻Comments
-function getCommentsByHot(av: number) {
-  getVideoCommentsByHot(av)
+function getComments(av: number,mode:number) {
+  getVideoComments(av,mode)
     .then((res) => {
       data.videoComments = res.data.replies;
-      console.log("獲取留言成功");
+      console.log("獲取留言成功",res.data.replies);
     })
     .catch(() => {
       alert("獲取視頻Comments失敗");
     });
 }
-function getCommentsByTime(av: number) {
-  getVideoCommentsByTime(av)
-    .then((res) => {
-      data.videoComments = res.data.replies;
-      console.log("獲取成功");
-    })
-    .catch(() => {
-      alert("獲取視頻Comments失敗");
-    });
-}
+
 
 onMounted(() => {
   //獲取用戶頭像
@@ -326,12 +328,12 @@ onMounted(() => {
       alert("獲取視頻TAGS失敗");
     });
   //請求視頻Comments
-  getCommentsByHot(data.av);
+  getComments(data.av,0);
   //獲取推薦視頻
   getVideoRcmdList(data.av)
     .then((res) => {
-      data.rcmdList=res.data;
-      console.log("推薦視頻",data.rcmdList)
+      data.rcmdList = res.data;
+     /*  console.log("推薦視頻", data.rcmdList); */
     })
     .catch(() => {
       alert("獲取推薦視頻失敗");
@@ -344,7 +346,7 @@ onMounted(() => {
   padding: 0 140px;
   padding-bottom: 20px;
   display: flex;
-  justify-content:  space-between;
+  justify-content: space-between;
   background-color: rgb(255, 187, 187);
   .leftVideoView {
     width: 865px;

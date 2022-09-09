@@ -132,13 +132,10 @@ interface videoComments {
 
 
 //視頻評論(熱度)
-export const getVideoCommentsByHot = (av: number): Promise<videoComments> => {
-    return request.get('/api/x/v2/reply/main?type=1&oid=' + av)
+export const getVideoComments = (av: number,mode:number): Promise<videoComments> => {
+    return request.get('/api/x/v2/reply/main?type=1&mode='+mode+'&oid=' + av)
 }
-//視頻評論(時間)
-export const getVideoCommentsByTime = (av: number): Promise<videoComments> => {
-    return request.get('/api/x/v2/reply/main?type=1&mode=2&oid=' + av)
-}
+
 
 interface rootReplies {
     data: {
