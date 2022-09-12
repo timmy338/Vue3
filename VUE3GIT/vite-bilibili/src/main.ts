@@ -19,4 +19,8 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     createApp(App).component(key, component)
 }
-createApp(App).use(router).component('font-awesome-icon', FontAwesomeIcon).mount('#app')
+
+//滾動加載
+import InfiniteScroll from "element-plus";
+
+createApp(App).use(router).use(InfiniteScroll).component('font-awesome-icon', FontAwesomeIcon).mount('#app')

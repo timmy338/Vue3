@@ -425,14 +425,9 @@ onMounted(() => {
       position: absolute;
       bottom: -10px;
       z-index: 6;
-      width: 130%;
-      height: 40%;
-      background: linear-gradient(
-        to top,
-        rgba(255, 255, 255, 0.2) 1%,
-        rgba(255, 255, 255, 0.2) 40%
-      );
-      filter: blur(20px);
+      width: 120%;
+      height: 35%;
+      filter: blur(10px);
     }
     .el-carousel__item h3 {
       color: #feffff;
