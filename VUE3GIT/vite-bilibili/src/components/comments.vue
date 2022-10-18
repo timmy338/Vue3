@@ -38,7 +38,7 @@
       <div v-for="commentRely in commentRoot.replies">
         <CommentRely :commentData="commentRely" :up="videoUP" />
       </div>
-      <div class="more" v-if="commentRoot.rcount > 1 && !commentRoot.folder.is_folded">
+      <div class="more" v-if="commentRoot.rcount > 3 && !commentRoot.folder.is_folded">
         {{ commentRoot.reply_control.sub_reply_entry_text }},<text
           style="color: #00a1d6"
           class="moreBtn"

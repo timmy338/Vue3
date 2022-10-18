@@ -81,83 +81,14 @@
         </div>
       </div>
 
-      <LoadMore
-        v-if="videoComments"
-        :comments="videoComments"
-        :videoUP="videoUP"
-        :videoInfo="videoInfo"
-      >
+      <LoadMore :comments="videoComments" :size="10" @loadMoreFn="loadComments">
         <template #discussionArea="scope">
-          <Comments :comments ="scope.comments" :videoUP="scope.videoUP" :videoInfo="scope.videoInfo" />
+          <Comments
+            :comments="scope.comments"
+            :videoUP="videoUP"
+            :videoInfo="videoInfo"
+          />
         </template>
-
-        <!--         <div
-          class="comments"
-          v-if="videoComments"
-          v-for="(commentRoot, index) of videoComments"
-        >
-          <img class="ownerAvatar" :src="commentRoot.member.avatar" />
-
-          <div class="divRight">
-            <div class="ownerName">
-              <span style="color: #fb7299">
-                {{ commentRoot.member.uname }}
-              </span>
-
-              <div style="margin-left: 10px">
-                <text class="level">
-                  LV{{ commentRoot.member.level_info.current_level }}+
-                </text>
-              </div>
-              <div>
-                <text class="up" v-if="commentRoot.mid == videoUP">UP</text>
-              </div>
-            </div>
-            <div class="content">{{ commentRoot.content.message }}</div>
-            <div class="contentInfo">
-              {{ yearToSecondHandle(videoComments[0].ctime) }}
-              <div class="textBlueHover">
-                <font-awesome-icon
-                  icon="fa-solid fa-thumbs-up"
-                  style="margin-right: 5px"
-                />{{ videoComments[0].like }}
-              </div>
-              <div class="textBlueHover">
-                <font-awesome-icon icon="fa-solid fa-thumbs-down" />
-              </div>
-              <div class="rely">回複</div>
-            </div>
-            <div v-for="commentRely in commentRoot.replies">
-              <CommentRely :commentData="commentRely" :up="videoUP" />
-            </div>
-            <div
-              class="more"
-              v-if="commentRoot.rcount > 1 && !commentRoot.folder.is_folded"
-            >
-              {{ commentRoot.reply_control.sub_reply_entry_text }},<text
-                style="color: #00a1d6"
-                class="moreBtn"
-                @click="changeRootReplies(videoInfo.aid, commentRoot.rpid, index)"
-              >
-                点击查看</text
-              >
-            </div>
-            <div
-              class="morePages"
-              style="margin-top: 10px"
-              v-if="commentRoot.rcount > 10 && commentRoot.folder.is_folded"
-            >
-              <div class="pagination-block">
-                <el-pagination
-                  small
-                  layout="prev, pager, next"
-                  :total="commentRoot.rcount"
-                  @current-change="(val:number) => handleCurrentChange(videoInfo.aid, commentRoot.rpid,index,val)"
-                />
-              </div>
-            </div>
-          </div>
-        </div> -->
       </LoadMore>
     </div>
     <div class="rightVideoView">
@@ -184,10 +115,16 @@
         </div>
       </div>
 
-      <div>
+      <div class="rcmdVideoDiv">
         <text style="font-size: 20px">相關視頻</text>
-        <div v-for="tab in rcmdList" style="margin-top: 10px">
+        <div
+          v-for="tab in fold ? rcmdList.slice(0, 20) : rcmdList"
+          style="margin-top: 10px"
+        >
           <RowVideo :videoData="tab" />
+        </div>
+        <div class="foldRcmdVideo" @click="fold = !fold">
+          <text>{{ fold ? "展開" : "收起" }}</text>
         </div>
       </div>
     </div>
@@ -230,10 +167,11 @@ const textarea = ref("");
 const commentTabClick = (tab: TabPanelName) => {
   /* console.log(tab); */
   if (tab == "hot") {
-    getComments(data.av, 0);
+    data.modeComment = 0;
   } else {
-    getComments(data.av, 2);
+    data.modeComment = 2;
   }
+  getComments(data.modeComment);
 };
 const data = reactive({
   avatar: "",
@@ -248,42 +186,47 @@ const data = reactive({
     fans: 0,
   },
   rcmdList: [] as rcmdVideo[],
-  pageForComments: 1,
+  fold: true,
+  modeComment: 0,
 });
 
 //從別頁傳入bv號
 /* const Route=useRoute();
 data.bv=""+Route.query.bv; */
 
-let { videoInfo, videoSrc, videoTags, videoComments, videoUP, owner, rcmdList } = toRefs(
-  data
-);
+let {
+  videoInfo,
+  videoSrc,
+  videoTags,
+  videoComments,
+  videoUP,
+  owner,
+  rcmdList,
+  fold,
+} = toRefs(data);
 
 //請求視頻Comments
-function getComments(av: number, mode: number) {
-  data.pageForComments = 1;
-  getVideoComments(av, mode, data.pageForComments)
+function getComments(mode: number) {
+  getVideoComments(data.av, mode, 1, 10)
     .then((res) => {
+      /* console.log(res.data) */
       data.videoComments = res.data.replies;
-      console.log("獲取留言成功", res.data.replies);
     })
     .catch(() => {
       alert("獲取視頻Comments失敗");
     });
 }
-//滾動加載視頻Comments
-const loadComments = (av: number, mode: number) => {
-  data.pageForComments++;
-  getVideoComments(av, mode, data.pageForComments)
+//請求視頻Comments
+const loadComments = (page: number, size: number) => {
+  console.log("run???");
+  getVideoComments(data.av, data.modeComment, page, size)
     .then((res) => {
       data.videoComments = data.videoComments.concat(res.data.replies);
-      console.log("滾動加載留言成功", res.data.replies);
     })
     .catch(() => {
-      console.error("滾動加載Comments失敗" + data.pageForComments);
+      alert("滾動視頻Comments失敗");
     });
 };
-
 onMounted(() => {
   //獲取用戶頭像
   getUserInfo().then((res) => {
@@ -322,7 +265,7 @@ onMounted(() => {
       alert("獲取視頻TAGS失敗");
     });
   //請求視頻Comments
-  getComments(data.av, 0);
+  getComments(data.modeComment);
   //獲取推薦視頻
   getVideoRcmdList(data.av)
     .then((res) => {
@@ -338,7 +281,6 @@ onMounted(() => {
 .videoView {
   margin-top: 20px;
   padding: 0 140px;
-  padding-bottom: 20px;
   display: flex;
   justify-content: space-between;
   background-color: rgb(255, 187, 187);
@@ -489,6 +431,17 @@ onMounted(() => {
         .subscribe:hover {
           background-color: #00b5e5;
         }
+      }
+    }
+    .rcmdVideoDiv {
+      .foldRcmdVideo {
+        background-color: #f4f5f7;
+        height: 50px;
+        width: 90%;
+        text-align: center;
+        line-height: 50px;
+        border-radius: 0.2em;
+        margin: 20px auto;
       }
     }
   }

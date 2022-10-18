@@ -21,6 +21,7 @@ declare module '@vue/runtime-core' {
     ElRow: typeof import('element-plus/es')['ElRow']
     ElTabPane: typeof import('element-plus/es')['ElTabPane']
     ElTabs: typeof import('element-plus/es')['ElTabs']
+    Fold: typeof import('./src/components/fold.vue')['default']
     Load: typeof import('./src/components/load.vue')['default']
     LoadMore: typeof import('./src/components/loadMore.vue')['default']
     PlayVideo: typeof import('./src/components/playVideo.vue')['default']

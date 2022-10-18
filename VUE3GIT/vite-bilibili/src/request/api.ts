@@ -132,8 +132,8 @@ interface videoComments {
 
 
 //視頻評論
-export const getVideoComments = (av: number,mode:number,page:number): Promise<videoComments> => {
-    return request.get('/api/x/v2/reply/main?type=1&mode='+mode+'&oid=' + av+'&pn='+page)
+export const getVideoComments = (av: number,mode:number,page:number,size:number): Promise<videoComments> => {
+    return request.get('/api/x/v2/reply/main?type=1&mode='+mode+'&oid=' + av+'&next='+page+'&ps='+size)
 }
 
 

@@ -33,13 +33,12 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, toRefs, ref } from "vue";
 //數字格式規範化
-import { millionsHandle, yearToSecondHandle } from "../ts/global";
-import { reply } from "../request/api";
+import {  yearToSecondHandle } from "../ts/global";
+import { replyType } from "../request/api";
 
 const props = defineProps<{
-  commentData: reply;
+  commentData: replyType;
   up: number;
 }>();
 </script>
