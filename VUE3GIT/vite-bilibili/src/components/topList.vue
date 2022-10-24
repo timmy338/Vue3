@@ -79,12 +79,12 @@ onMounted(() => {
 </script>
 <style lang="less" scoped>
 .topMargin {
+  position: fixed;
   height: 70px;
+  z-index: 99;
   .topList {
-    position: fixed;
-    width: 100%;
+    width: 100vw;
     background-color: white;
-    z-index: 99;
     .headDiv {
       width: auto;
       padding: 0 20px;
@@ -124,11 +124,12 @@ onMounted(() => {
         .el-input__inner,
         #el-id-8546-0 {
           opacity: 0.8;
+          background: red;
         }
       }
 
       .headRight {
-        width: 30%;
+        width: 33%;
         display: flex;
         flex-direction: row;
         align-items: center;

@@ -17,6 +17,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import( '../views/video.vue')
   },
   {
+    path: '/message',
+    name: 'message',
+    component: () => import( '../views/message.vue')
+  },
+  {
     path: '/:catchAll(.*)',
     name: 'error',
     component: () => import( '../views/error.vue')
