@@ -12,33 +12,18 @@
         <el-button color="#00A1D6" @click="submitCode()">2維碼登錄</el-button>
       </div>
       <div class="line"></div>
-      <el-form ref="loginFormRef" :model="loginForm" :rules="rules" id="loginForm">
-        <div style="text-align: center; margin-bottom: 20px">
-          <text style="font-size: 20px">密碼登录</text>
+      <div id="loginForm">
+        <div style=" margin-bottom: 20px; display: flex;line-height: 20px;">
+          <router-link to="/login/account" style="text-decoration: none">
+            <text style="font-size: 20px">密碼登录</text>
+          </router-link>
+          <el-divider direction="vertical" />
+          <router-link to="/login/phoneMessage" style="text-decoration: none">
+            <text style="font-size: 20px">短信登录</text>
+          </router-link>
         </div>
-        <el-form-item label="帳號" prop="userName">
-          <el-input
-            v-model="loginForm.userName"
-            type="text"
-            autocomplete="off"
-            placeholder="Please input username"
-          />
-        </el-form-item>
-        <el-form-item label="密碼" prop="password">
-          <el-input
-            v-model="loginForm.password"
-            type="password"
-            autocomplete="off"
-            placeholder="Please input password"
-          />
-        </el-form-item>
-        <el-form-item class="btnDiv">
-          <el-button class="registerBtn">注冊</el-button>
-          <el-button class="loginBtn" color="#00A1D6" @click="submitForm()">
-            登錄
-          </el-button>
-        </el-form-item>
-      </el-form>
+        <router-view></router-view>
+      </div>
     </div>
   </div>
 </template>
@@ -52,34 +37,15 @@ import { setCookie } from "../ts/getCookieInUrl";
 import Cookies from "js-cookie";
 
 const data = reactive({
-  loginForm: {
-    userName: "",
-    password: "",
-  },
   codeLoginInfo: {
     url: "text",
     oauthKey: "",
   },
 });
 
-let { loginForm } = toRefs(data);
 
-//獲取Form的dom對象
-let loginFormRef = ref();
 //獲取當前頁面的對象
 let router = useRouter();
-
-//校驗規則
-const rules = {
-  userName: [
-    { required: true, message: "用戶名不能為空", trigger: "blur" },
-    { min: 3, message: "長度不能少於3", trigger: "blur" },
-  ],
-  password: [
-    { required: true, message: "密碼不能為空", trigger: "blur" },
-    { min: 3, message: "長度不能少於3", trigger: "blur" },
-  ],
-};
 
 //刷新2維碼
 const getCodeUrl = () => {
@@ -107,15 +73,6 @@ const submitCode = () => {
   });
 };
 
-const submitForm = () => {
-  loginFormRef.value
-    .validate()
-    .then(() => {})
-    .catch(() => {
-      alert("登錄失敗,請重試");
-    });
-};
-
 //將2維碼渲染到dom元素上
 const useqrcode = () => {
   //獲取canvas元素的dom再繪製qrCode,(!由於庫版本不是vue3,無法用ref的方式)
@@ -127,9 +84,9 @@ const useqrcode = () => {
 };
 
 onMounted(() => {
-  if (Cookies.get("SESSDATA")) {
+  /*   if (Cookies.get("SESSDATA")) {
     router.push("/home");
-  }
+  } */
 
   useqrcode();
 });
@@ -181,12 +138,7 @@ onMounted(() => {
   width: 300px;
   display: flex;
   flex-direction: column;
-  align-content: center;
+  align-items: center;
 }
-.registerBtn {
-  width: 48%;
-}
-.loginBtn {
-  width: 48%;
-}
+
 </style>

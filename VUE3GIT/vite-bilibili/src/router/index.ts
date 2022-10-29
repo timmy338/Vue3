@@ -4,7 +4,17 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/login',
     name: 'login',
-    component: () => import('../views/login.vue')
+    component: () => import('../views/login.vue'),
+    children: [
+      {
+        path: 'account',
+        component: () => import('../viewsRouter/login/account.vue')
+      },
+      {
+        path: 'phoneMessage',
+        component: () => import('../viewsRouter/login/phoneMessage.vue')
+      },
+    ]
   },
   {
     path: '/home',

@@ -52,9 +52,7 @@ let { hHeight } = toRefs(data);
     margin: 0 auto;
     height: 100%;
     display: flex;
-    ._active {
-      color: red;
-    }
+
 
     #left {
       width: 15%;
